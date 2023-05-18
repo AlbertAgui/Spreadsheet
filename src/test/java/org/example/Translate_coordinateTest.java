@@ -15,7 +15,7 @@ public class Translate_coordinateTest {
 
     @Test
     public void test_translate_coordinate_to_int(){
-        Num_coordinate num_coordinate = new Num_coordinate();
+        Num_coordinate num_coordinate;
         num_coordinate = Translate_coordinate.translate_coordinate_to_int("A23");
         Assert.assertEquals(1, (int) num_coordinate.num_column);
 

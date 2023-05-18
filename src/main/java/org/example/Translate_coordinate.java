@@ -2,7 +2,6 @@ package org.example;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.lang.Math;
 
 public class Translate_coordinate {
     public static Boolean is_correct_coordinate(String s_coordinate) {
@@ -36,15 +35,15 @@ public class Translate_coordinate {
             Num_coordinate num_coordinate = new Num_coordinate();
             String sn_column = matcher.group(1); //characters
             String sn_row = matcher.group(2);    //numbers
-            Integer n_column;
-            Integer n_row;
+            int n_column;
+            int n_row;
 
             //System.out.println("Characters: " + sn_column + "\n");
             System.out.println("sn_row: " + sn_row + "\n");
 
             n_column = 0;
-            Integer alphabet_size = 26;
-            Integer multiplier = 1;
+            int alphabet_size = 26;
+            int multiplier = 1;
             for(int i = sn_column.length() - 1; i >= 0; --i) {
                 n_column = n_column + (((int) sn_column.charAt(i) - (int) 'A' + 1) * (multiplier));
                 System.out.println("n_column: " + n_column + "\n");
