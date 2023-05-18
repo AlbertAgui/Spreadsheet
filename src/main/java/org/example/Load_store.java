@@ -11,19 +11,23 @@ public class Load_store {
             BufferedReader reader = new BufferedReader(new FileReader(s2vFilePath));
             Spreadsheet t_spreadsheet = new Spreadsheet();
 
+
             String line;
-            char n_row = '1';
+            Integer n_row = 1;
 
             while ((line = reader.readLine()) != null) {
                 // Split the line by semicolon
                 String[] tokens = line.split(";");
-                char n_column = 'A';
+                Integer n_column = 1;
+                Num_coordinate num_coordinate = new Num_coordinate();
 
                 // Create a new row
                 for (int i = 0; i < tokens.length; i++) {
                     if (!tokens[i].isEmpty()) {
                         float t_value = Float.parseFloat(tokens[i]);
-                        t_spreadsheet.set_cell_value(Character.toString(n_column) + Character.toString(n_row), t_value);
+                        num_coordinate.num_column = n_column;
+                        num_coordinate.num_row = n_row;
+                        t_spreadsheet.set_cell_value(num_coordinate, t_value);
                         System.out.println("Cell: " + n_column + n_row + ", value set: " + t_value + "\n");
                     } else {
                         System.out.println("Cell: " + n_column + n_row + "no value!\n");

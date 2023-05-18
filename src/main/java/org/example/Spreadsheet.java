@@ -1,22 +1,19 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Spreadsheet {
-    Map<String, Cell> cell_matrix = new HashMap<>();
+    SparseMatrix<Cell> cell_matrix = new SparseMatrix<>();
 
-    public void get_cell_value(String coordinate) {
+    public void get_cell_value(Num_coordinate n_coordinate) {
         float value;
-        value = cell_matrix.get(coordinate).getValue();
-        System.out.println("get value from coordinates:" + coordinate + " : " +  value + "\n");
+        value = cell_matrix.GetElem(n_coordinate.num_column, n_coordinate.num_row).getValue();
+        //System.out.println("get value from coordinates:" + coordinate + " : " +  value + "\n");
     }
 
-    public void set_cell_value(String coordinate, float value) {
-        Cell temp;
-        temp = new Cell();
-        temp.setValue(value);
-        cell_matrix.put(coordinate, temp);
-        System.out.println("set value to coordinates:" + coordinate + " : " + value + "\n");
+    public void set_cell_value(Num_coordinate n_coordinate, float value) {
+        Cell in_cell;
+        in_cell = new Cell();
+        in_cell.setValue(value);
+        cell_matrix.SetElem(n_coordinate.num_column, n_coordinate.num_row, in_cell);
+        //System.out.println("set value to coordinates:" + coordinate + " : " + value + "\n");
     }
 }
