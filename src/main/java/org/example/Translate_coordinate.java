@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.lang.Math;
 
 public class Translate_coordinate {
     public static Boolean is_correct_coordinate(String s_coordinate) {
@@ -25,7 +26,6 @@ public class Translate_coordinate {
         }
     }
 
-
     public static Num_coordinate translate_coordinate_to_int(String s_coordinate) {
         String pattern = "^([A-Z]+)(\\d+)$";
 
@@ -45,12 +45,12 @@ public class Translate_coordinate {
             n_column = 0;
             Integer alphabet_size = 26;
             Integer multiplier = 1;
-            for(int i = 0; i < sn_column.length(); ++i){
-                n_column = n_column + (((int)sn_column.charAt(i) - (int)'A' + 1) * (multiplier));
-                //System.out.println("n_column: " + n_column + "\n");
-                //System.out.println("char_value: " + ((int)sn_column.charAt(i) - (int)'A') + "\n");
-                //System.out.println("multiplier: " + multiplier + "\n");
-                multiplier = multiplier * (alphabet_size + 1);
+            for(int i = sn_column.length() - 1; i >= 0; --i) {
+                n_column = n_column + (((int) sn_column.charAt(i) - (int) 'A' + 1) * (multiplier));
+                System.out.println("n_column: " + n_column + "\n");
+                System.out.println("char_value: " + ((int) sn_column.charAt(i) - (int) 'A') + "\n");
+                System.out.println("multiplier: " + multiplier + "\n");
+                multiplier = multiplier * alphabet_size;
             }
 
             n_row = Integer.parseInt(sn_row);
