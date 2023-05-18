@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Translate_coordinate {
-    public static Boolean translate(String s_coordinate) {
+    public static Boolean is_correct_coordinate(String s_coordinate) {
         System.out.println("Translate input: " + s_coordinate + "\n");
         String pattern = "^([A-Z]+)(\\d+)$";
 
@@ -23,6 +23,45 @@ public class Translate_coordinate {
             System.out.println("Incorrect format\n");
             return false;
         }
+    }
 
+
+    public static Num_coordinate translate_coordinate_to_int(String s_coordinate) {
+        String pattern = "^([A-Z]+)(\\d+)$";
+
+        Pattern regexPattern = Pattern.compile(pattern);
+        Matcher matcher = regexPattern.matcher(s_coordinate);
+
+        if (matcher.matches()) {
+            Num_coordinate num_coordinate = new Num_coordinate();
+            String sn_column = matcher.group(1); //characters
+            String sn_row = matcher.group(2);    //numbers
+            Integer n_column;
+            Integer n_row;
+
+            //System.out.println("Characters: " + sn_column + "\n");
+            System.out.println("sn_row: " + sn_row + "\n");
+
+            n_column = 0;
+            Integer alphabet_size = 26;
+            Integer multiplier = 1;
+            for(int i = 0; i < sn_column.length(); ++i){
+                n_column = n_column + (((int)sn_column.charAt(i) - (int)'A' + 1) * (multiplier));
+                //System.out.println("n_column: " + n_column + "\n");
+                //System.out.println("char_value: " + ((int)sn_column.charAt(i) - (int)'A') + "\n");
+                //System.out.println("multiplier: " + multiplier + "\n");
+                multiplier = multiplier * (alphabet_size + 1);
+            }
+
+            n_row = Integer.parseInt(sn_row);
+            num_coordinate.num_column = n_column;
+            num_coordinate.num_row = n_row;
+
+            return num_coordinate;
+        }
+        else {
+            System.out.println("Incorrect format\n");
+            return null;
+        }
     }
 }
