@@ -1,8 +1,6 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class Load_store {
     static Spreadsheet loadspreadsheet(String s2vFilePath) {
@@ -43,4 +41,38 @@ public class Load_store {
         return null;
     }
 
+
+    static void storespreadsheet(String s2vFilePath, Spreadsheet spreadsheet) {
+        try {
+            // Read the S2V file
+            File file = new File(s2vFilePath);
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            Spreadsheet t_spreadsheet = new Spreadsheet();
+
+            String line;
+
+            for (int i = 1; i <= 3; ++i) {
+                for (int j = 1; j <= 3; ++j) {
+                    if(j != 1){
+                        writer.write(";");
+                    }
+                    if(!(i==2 && j==2)){
+                        writer.write("A1");
+                    }
+                }
+                if(i != 3) {
+                    writer.newLine();
+                }
+            }
+
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while interpreting the S2V file: " + e.getMessage());
+        }
+    }
 }
