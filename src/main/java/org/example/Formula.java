@@ -226,6 +226,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                     aux_stack.push(next);
                 }
             }
+            //System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
+        }
+        while (!aux_stack.isEmpty()) {
+            postfix.add(aux_stack.pop());
         }
     }
 
