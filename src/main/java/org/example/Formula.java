@@ -23,6 +23,9 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     public static final List<String> TokenMatchInfos = new ArrayList<>(Arrays.asList( //static="class instance, unique", final="static, constant"
             "\s",//is this needed?
             "[+-]",
+            "[*/]",
+            "\\)",
+            "\\(",
             "[0-9]+"//093 will be supported... is it fine?
     ));
 
@@ -30,7 +33,8 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         tokens = new LinkedList<>();
         while(!formula_body.isEmpty()) {
             for(String tokeninfo : TokenMatchInfos) {
-                Pattern p = Pattern.compile('^'+tokeninfo);//find only if are at start of string! take into account if future strings are a subset of others at start!!
+                //find only if are at start of string! take into account if future strings are a subset of others at start!!
+                Pattern p = Pattern.compile('^'+tokeninfo);
                 Matcher m = p.matcher(formula_body);
                 if (m.find()) {
                     String token = m.group(0);
@@ -101,4 +105,9 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             return true;
         }
     }
+
+    //Generate postfix
+
+
+    //Evaluate postfix
 }
