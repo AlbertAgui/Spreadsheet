@@ -26,9 +26,9 @@ public class Load_store {
                         num_coordinate.num_column = n_column;
                         num_coordinate.num_row = n_row;
                         t_spreadsheet.set_cell_value(num_coordinate, t_value);
-                        System.out.println("Cell: " + n_column + n_row + ", value set: " + t_value + "\n");
+                        //System.out.println("Cell: " + n_column + n_row + ", value set: " + t_value + "\n");
                     } else {
-                        System.out.println("Cell: " + n_column + n_row + "no value!\n");
+                        //System.out.println("Cell: " + n_column + n_row + "no value!\n");
                     }
                     n_column++;
                 }
@@ -56,14 +56,13 @@ public class Load_store {
 
             String line;
 
-            for (int i = 1; i <= 3; ++i) {
+            for (int i = 1; i <= 3; ++i) { //modify
                 for (int j = 1; j <= 3; ++j) {
                     if(j != 1){
                         writer.write(";");
                     }
-                    if(!(i==2 && j==2)){
-                        writer.write("A1");
-                    }
+                    Num_coordinate coor = new Num_coordinate(i,j);
+                    writer.write(Float.toString(spreadsheet.get_cell_value(coor)));
                 }
                 if(i != 3) {
                     writer.newLine();
