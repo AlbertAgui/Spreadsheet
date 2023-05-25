@@ -3,9 +3,8 @@ package org.example;
 public class Spreadsheet {
     SparseMatrix<Cell> cell_matrix = new SparseMatrix<>();
 
-    public void get_cell_value(Num_coordinate n_coordinate) {
-        float value;
-        value = cell_matrix.GetElem(n_coordinate.num_column, n_coordinate.num_row).getValue();
+    public float get_cell_value(Num_coordinate n_coordinate) {
+        return  cell_matrix.GetElem(n_coordinate.num_column, n_coordinate.num_row).getValue();
         //System.out.println("get value from coordinates:" + coordinate + " : " +  value + "\n");
     }
 
