@@ -40,4 +40,39 @@ public class Translate_coordinateTest {
         num_coordinate = Translate_coordinate.translate_coordinate_to_int("UYT123");
         Assert.assertEquals(14866, (int) num_coordinate.num_column);
     }
+
+    @Test
+    public void test_parse1() {
+        Formula.setFormula_body("+ 1 - 2 +5");
+        Formula.tokenize();
+        Assert.assertFalse(Formula.is_parseable());//false - redo
+    }
+
+    @Test
+    public void test_parse2() {
+        Formula.setFormula_body("1 - 2 +5+");//false - redo
+        Formula.tokenize();
+        Assert.assertFalse(Formula.is_parseable());
+    }
+
+    @Test
+    public void test_parse3() {
+        Formula.setFormula_body("1 - 2 +5");//true
+        Formula.tokenize();
+        Assert.assertTrue(Formula.is_parseable());
+    }
+
+    @Test
+    public void test_parse4() {
+        Formula.setFormula_body("1");//true
+        Formula.tokenize();
+        Assert.assertTrue(Formula.is_parseable());
+    }
+
+    @Test
+    public void test_parse5() {
+        Formula.setFormula_body("+ 3");//false
+        Formula.tokenize();
+        Assert.assertFalse(Formula.is_parseable());
+    }
 }
