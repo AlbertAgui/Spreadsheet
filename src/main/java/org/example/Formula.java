@@ -233,5 +233,40 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         }
     }
 
+
+
+
     //Evaluate postfix
+    public static float operate(String operator, String l_operand, String r_operand) {
+        float l_op = Float.parseFloat(l_operand);
+        float r_op = Float.parseFloat(r_operand);
+        float result = switch (operator) {
+            case "+" -> l_op + r_op;
+            case "-" -> l_op - r_op;
+            case "*" -> l_op * r_op;
+            case "/" -> l_op / r_op;
+            default -> -1; //error should not be needed
+        };
+        return result;
+    }
+
+    public static float evaluate_postfix() { //-1 not suported!
+        int value;
+        Stack<String> aux_stack = new Stack<>();
+        for (int i = 0; i < postfix.size(); ++i) {
+            String next = postfix.get(i);
+            if(is_operand(next)) {
+                aux_stack.push(next);
+            } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
+                String down, top;
+                top = aux_stack.pop();
+                down = aux_stack.pop();
+                aux_stack.push(Float.toString(operate(next, down, top))); //ojo format!!
+            }
+            System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
+        }
+        return Float.parseFloat(aux_stack.pop());
+    }
+
+
 }
