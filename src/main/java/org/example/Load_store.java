@@ -7,34 +7,43 @@ public class Load_store {
         try {
             // Read the S2V file
             BufferedReader reader = new BufferedReader(new FileReader(s2vFilePath));
-            Spreadsheet t_spreadsheet = new Spreadsheet();
-
+            Spreadsheet spreadsheet = new Spreadsheet();
 
             String line;
-            Integer n_row = 1;
+            Integer cntRow = 0, cntColum = 0;
+            Integer nRow = 1;
 
             while ((line = reader.readLine()) != null) {
                 // Split the line by semicolon
                 String[] tokens = line.split(";");
-                Integer n_column = 1;
-                Num_coordinate num_coordinate = new Num_coordinate();
+                Integer nColum = 1;
+                NumCoordinate numCoordinate = new NumCoordinate();
+                if(cntColum == 0) cntColum = tokens.length;
 
                 // Create a new row
                 for (int i = 0; i < tokens.length; i++) {
                     if (!tokens[i].isEmpty()) {
                         float t_value = Float.parseFloat(tokens[i]);
-                        num_coordinate.num_column = n_column;
-                        num_coordinate.num_row = n_row;
-                        t_spreadsheet.set_cell_value(num_coordinate, t_value);
-                        //System.out.println("Cell: " + n_column + n_row + ", value set: " + t_value + "\n");
+                        numCoordinate.setNumColum(nColum);
+                        numCoordinate.setNumRow(nRow);
+                        //System.out.println("load: colum: " + nColum + " row: " + nRow + ", value set: " + t_value + "\n");
+                        spreadsheet.setCellValue(numCoordinate, t_value);
                     } else {
-                        //System.out.println("Cell: " + n_column + n_row + "no value!\n");
+                        numCoordinate.setNumColum(nColum);
+                        numCoordinate.setNumRow(nRow);
+                        //System.out.println("load: colum: " + nColum + " row: " + nRow + " no value!\n");
+                        spreadsheet.setCellValue(numCoordinate, 0); //SHOULD BE CHANGED
                     }
-                    n_column++;
+                    nColum++;
                 }
-                n_row++;
+                nRow++;
             }
-            return t_spreadsheet;
+            cntRow = nRow - 1;
+
+            NumCoordinate size = new NumCoordinate(cntRow, cntColum);
+            //System.out.println("Size: " + "colum: " +  cntColum + ", row: " + cntRow + "\n");
+            spreadsheet.setSize(size);
+            return spreadsheet;
         } catch (IOException e) {
             System.out.println("An error occurred while interpreting the S2V file: " + e.getMessage());
         }
@@ -52,19 +61,23 @@ public class Load_store {
             }
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            Spreadsheet t_spreadsheet = new Spreadsheet();
-
             String line;
 
-            for (int i = 1; i <= 3; ++i) { //modify
-                for (int j = 1; j <= 3; ++j) {
+            NumCoordinate size = spreadsheet.getSize();
+            Integer nRow = size.getNumRow();
+            Integer nCol = size.getNumColum();
+            //System.out.println("Size: " + "colum: " +  nCol + ", row: " + nRow + "\n");
+
+            for (int i = 1; i <= nRow; ++i) { //modify
+                for (int j = 1; j <= nCol; ++j) {
                     if(j != 1){
                         writer.write(";");
                     }
-                    Num_coordinate coor = new Num_coordinate(i,j);
-                    writer.write(Float.toString(spreadsheet.get_cell_value(coor)));
+                    //System.out.println("cnt: Cell: " + j + i + "\n");
+                    NumCoordinate coordinate = new NumCoordinate(i,j);
+                    writer.write(Float.toString(spreadsheet.getCellValue(coordinate)));
                 }
-                if(i != 3) {
+                if(i != nRow) {
                     writer.newLine();
                 }
             }
