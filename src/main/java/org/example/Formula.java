@@ -38,7 +38,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 Matcher m = p.matcher(formula_body);
                 if (m.find()) {
                     String token = m.group(0);
-                    System.out.println("tokencomp: \"" + token + "\"");
+                    //System.out.println("tokencomp: \"" + token + "\"");
                     if (!token.equals(" ")) {
                         tokens.add(token);
                     }
@@ -263,10 +263,22 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 down = aux_stack.pop();
                 aux_stack.push(Float.toString(operate(next, down, top))); //ojo format!!
             }
-            System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
+            //System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
         }
         return Float.parseFloat(aux_stack.pop());
     }
 
+    public static float compute(String formula_body) {
+        setFormula_body(formula_body);
+        tokenize();
+        if (is_parseable()) {
+            //System.out.println("Correct!");
+            generate_postfix();
+            return evaluate_postfix();
+        } else {
+            System.out.println("No parseable formula!");
+            return 0;
+        }
+    }
 
 }
