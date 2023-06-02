@@ -26,7 +26,8 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             "[*/]",
             "\\(",
             "\\)",
-            "[0-9]+"//093 will be supported... is it fine?
+            "[0-9]+",//093 will be supported... is it fine?
+            "([A-Z]+)(\\d+)"
     ));
 
     public static void tokenize(){
@@ -55,13 +56,18 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
     //Parsing
     private static Boolean is_numerical(String token) {
-        return is_operand(token) || is_operator(token);
+        return is_operand(token) || is_operator(token) || is_cell_id(token);
     }
     public static Boolean is_operand(String token){
-        if(token.matches("[0-9]+")){
-            return true;
-        }
-        return false;
+        return is_number(token) || is_cell_id(token);
+    }
+
+    public static Boolean is_cell_id(String token){
+        return token.matches("([A-Z]+)(\\d+)");
+    }
+
+    public static Boolean is_number(String token){
+        return token.matches("[0-9]+");
     }
 
     public static Boolean is_operator(String token){
@@ -237,9 +243,26 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
 
     //Evaluate postfix
-    public static float operate(String operator, String l_operand, String r_operand) {
-        float l_op = Float.parseFloat(l_operand);
-        float r_op = Float.parseFloat(r_operand);
+    public static float operate(Spreadsheet spreadsheet, String operator, String l_operand, String r_operand) {
+        float l_op = 0, r_op = 0;
+        if(is_cell_id(l_operand)) {
+            NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(l_operand);
+            l_op = spreadsheet.getCellValue(coor); //add exceptions
+            //System.out.println("no es number, " + l_operand + ": " + l_op);
+        } else {
+            l_op = Float.parseFloat(l_operand);
+            //System.out.println("l_op: " + l_op);
+        }
+
+        if(is_cell_id(r_operand)) {
+            NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(r_operand);
+            r_op = spreadsheet.getCellValue(coor); //add exceptions
+            //System.out.println("no es number, " + r_operand + ": " + r_op);
+        } else {
+            r_op = Float.parseFloat(r_operand);
+            //System.out.println("r_op: " + r_op);
+        }
+
         float result = switch (operator) {
             case "+" -> l_op + r_op;
             case "-" -> l_op - r_op;
@@ -250,7 +273,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         return result;
     }
 
-    public static float evaluate_postfix() { //-1 not suported!
+    public static float evaluate_postfix(Spreadsheet spreadsheet) { //-1 not suported!
         int value;
         Stack<String> aux_stack = new Stack<>();
         for (int i = 0; i < postfix.size(); ++i) {
@@ -261,20 +284,20 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 String down, top;
                 top = aux_stack.pop();
                 down = aux_stack.pop();
-                aux_stack.push(Float.toString(operate(next, down, top))); //ojo format!!
+                aux_stack.push(Float.toString(operate(spreadsheet, next, down, top))); //ojo format!!
             }
             //System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
         }
         return Float.parseFloat(aux_stack.pop());
     }
 
-    public static float compute(String formula_body) {
+    public static float compute(String formula_body, Spreadsheet spreadsheet) {
         setFormula_body(formula_body);
         tokenize();
         if (is_parseable()) {
             //System.out.println("Correct!");
             generate_postfix();
-            return evaluate_postfix();
+            return evaluate_postfix(spreadsheet);
         } else {
             System.out.println("No parseable formula!");
             return 0;
