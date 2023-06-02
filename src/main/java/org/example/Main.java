@@ -11,7 +11,7 @@ public class Main {
             numCoordinate = Translate_coordinate.translate_coordinate_to_int(s_coordinate);
 
             //compute formula value
-            float value = Formula.compute("4+5*4/(3+6/5+3*(4*5))");
+            float value = Formula.compute("4+5*4/(3+6/5+3*(4*5))", spreadsheet);
             spreadsheet.setCellValue(numCoordinate, value);
             Load_store.storespreadsheet("Data/t2wr.txt", spreadsheet);
         } else {
