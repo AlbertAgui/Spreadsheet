@@ -48,7 +48,7 @@ public class Spreadsheet {
             cell = new Cell();
         }
         cell.setValue(value);
-        System.out.println("spreadsheet: colum: " + n_coordinate.getNumColum() + " row: " + n_coordinate.getNumRow() + " value: " + cell.getValue() + "\n");
+        //System.out.println("spreadsheet: colum: " + n_coordinate.getNumColum() + " row: " + n_coordinate.getNumRow() + " value: " + cell.getValue() + "\n");
         cells.addCell(n_coordinate, cell);
     }
 

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class Translate_coordinate {
     public static Boolean is_correct_coordinate(String s_coordinate) {
-        System.out.println("Translate input: " + s_coordinate + "\n");
+        //System.out.println("Translate input: " + s_coordinate + "\n");
         String pattern = "^([A-Z]+)(\\d+)$";
 
         Pattern regexPattern = Pattern.compile(pattern);

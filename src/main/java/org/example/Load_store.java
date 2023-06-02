@@ -26,12 +26,12 @@ public class Load_store {
                         float t_value = Float.parseFloat(tokens[i]);
                         numCoordinate.setNumColum(nColum);
                         numCoordinate.setNumRow(nRow);
-                        System.out.println("load: colum: " + nColum + " row: " + nRow + ", value set: " + t_value + "\n");
+                        //System.out.println("load: colum: " + nColum + " row: " + nRow + ", value set: " + t_value + "\n");
                         spreadsheet.setCellValue(numCoordinate, t_value);
                     } else {
                         numCoordinate.setNumColum(nColum);
                         numCoordinate.setNumRow(nRow);
-                        System.out.println("load: colum: " + nColum + " row: " + nRow + " no value!\n");
+                        //System.out.println("load: colum: " + nColum + " row: " + nRow + " no value!\n");
                         spreadsheet.setCellValue(numCoordinate, 0); //SHOULD BE CHANGED
                     }
                     nColum++;
@@ -41,7 +41,7 @@ public class Load_store {
             cntRow = nRow - 1;
 
             NumCoordinate size = new NumCoordinate(cntRow, cntColum);
-            System.out.println("Size: " + "colum: " +  cntColum + ", row: " + cntRow + "\n");
+            //System.out.println("Size: " + "colum: " +  cntColum + ", row: " + cntRow + "\n");
             spreadsheet.setSize(size);
             return spreadsheet;
         } catch (IOException e) {
