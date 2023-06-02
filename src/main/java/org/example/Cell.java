@@ -1,22 +1,26 @@
 package org.example;
 
 public class Cell {
-    public String content;
-    public float value;
 
-    public void setContent(String content) {
-        this.content = content;
+    private Content content;
+
+    public Cell() {
+        this.content = new Content();
+    }
+
+    public void setWrittenData(String writtenData) {
+        content.setWrittenData(writtenData);
+    }
+
+    public String getWrittenData() {
+        return content.getWrittenData();
     }
 
     public void setValue(float value) {
-        this.value = value;
+        content.setValue(value);
     }
 
     public float getValue() {
-        return value;
-    }
-
-    public String getContent() {
-        return content;
+        return content.getValue();
     }
 }
