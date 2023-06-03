@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.Map;
+import java.util.Set;
 
 public class Spreadsheet {
     private Cells cells;
@@ -18,20 +19,20 @@ public class Spreadsheet {
         return this.size;
     }
 
-    public Boolean containsCell(NumCoordinate n_coordinate) {
-        return cells.containsCell(n_coordinate);
+    public Boolean containsCell(NumCoordinate numCoordinate) {
+        return cells.containsCell(numCoordinate);
     }
 
-    public void setCellWrittenData(NumCoordinate n_coordinate, String writtenData) {
+    public void setCellWrittenData(NumCoordinate numCoordinate, String writtenData) {
         Cell cell;
-        if(cells.containsCell(n_coordinate)) {
-            cell = cells.getCell(n_coordinate);
+        if(cells.containsCell(numCoordinate)) {
+            cell = cells.getCell(numCoordinate);
         }
         else {
             cell = new Cell();
         }
         cell.setWrittenData(writtenData);
-        cells.addCell(n_coordinate, cell);
+        cells.addCell(numCoordinate, cell);
     }
 
     public String getCellWrittenData(NumCoordinate n_coordinate) {
@@ -52,11 +53,45 @@ public class Spreadsheet {
         cells.addCell(n_coordinate, cell);
     }
 
-    public float getCellValue(NumCoordinate n_coordinate) {
-        return  cells.getCell(n_coordinate).getValue();
+    public float getCellValue(NumCoordinate numCoordinate) {
+        return  cells.getCell(numCoordinate).getValue();
     }
 
     public void displayCells() {
         this.cells.displayCells();
+    }
+
+    public void addCellDependant(NumCoordinate numCoordinate, NumCoordinate dependant) {
+        Cell cell;
+        if(cells.containsCell(numCoordinate)) {
+            cell = cells.getCell(numCoordinate);
+            cell.addDependant(dependant);
+            cells.addCell(numCoordinate, cell);
+        }
+        else {
+            System.out.println("Error trying to add cell dependant, non valid cell");
+        }
+    }
+
+    public void eraseCellDependant(NumCoordinate numCoordinate, NumCoordinate dependant) {
+        Cell cell;
+        if(cells.containsCell(numCoordinate)) {
+            cell = cells.getCell(numCoordinate);
+            cell.eraseDependant(dependant);
+            cells.addCell(numCoordinate, cell);
+        }
+        else {
+            System.out.println("Error trying to erase cell dependant, non valid cell");
+        }
+    }
+
+    public Set<NumCoordinate> getDependants(NumCoordinate numCoordinate) {
+        if(cells.containsCell(numCoordinate)) {
+            return cells.getCell(numCoordinate).getDependants();
+        }
+        else {
+            System.out.println("Error trying to get cell dependants, non valid cell");
+            return null;
+        }
     }
 }

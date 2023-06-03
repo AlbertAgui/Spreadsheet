@@ -182,6 +182,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         if (is_highp_operator(token)) return 2;
         if (is_lowp_operator(token)) return 1;
         if (is_open_claw(token)) return 0;
+        System.out.println("error in precedence");
         return -1; //error, will be modified
     }
 
@@ -291,12 +292,34 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         return Float.parseFloat(aux_stack.pop());
     }
 
+    private static void addDependants() {
+        Set<NumCoordinate> dependants;
+        for(int i = 0; i < tokens.size(); ++i) {
+            String next = tokens.get(i);
+            if (is_cell_id(next)) { //belongs to a set of tokens not treaten here
+
+            }
+        }
+    }
+
+    private static void eraseDependants() {
+        Set<NumCoordinate> dependants;
+        for(int i = 0; i < tokens.size(); ++i) {
+            String next = tokens.get(i);
+            if (is_cell_id(next)) { //belongs to a set of tokens not treaten here
+
+            }
+        }
+    }
+
     public static float compute(String formula_body, Spreadsheet spreadsheet) {
         setFormula_body(formula_body);
         tokenize();
         if (is_parseable()) {
             //System.out.println("Correct!");
             generate_postfix();
+            addDependants();
+            eraseDependants();
             return evaluate_postfix(spreadsheet);
         } else {
             System.out.println("No parseable formula!");

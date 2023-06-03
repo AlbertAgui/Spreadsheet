@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Objects;
+
 public class NumCoordinate {
     private Integer numColum;
     private Integer numRow;
@@ -31,5 +33,27 @@ public class NumCoordinate {
 
     public void display_coordinate() {
         System.out.println("coordinate: colum: " + numColum + " row: " + numRow);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        NumCoordinate otherNumCoordinate = (NumCoordinate) obj;
+        return numColum == otherNumCoordinate.numColum && numRow == otherNumCoordinate.numRow;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numColum, numRow);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + numColum + ", " + numRow + ")";
     }
 }
