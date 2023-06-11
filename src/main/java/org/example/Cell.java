@@ -8,11 +8,11 @@ public class Cell {
 
     private Dependants dependants;
 
-    public Cell(String contentType) {
+    /*public Cell(String contentType) {
         ContentFactory contentfactory = ContentFactory.getInstance(contentType);
         this.content = contentfactory.createContent();
         this.dependants = new Dependants();
-    }
+    }*/
 
     public Cell(){
         dependants = new Dependants();
