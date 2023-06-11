@@ -45,6 +45,20 @@ public class Cells {
         return new Cell(); //OJO aixi funciona en tots els casos?? Mirar prerequisists
     }
 
+    public NumCoordinate getSize() {
+        Integer maxRow = 0;
+        Integer maxCol = 0;
+        for (Integer rowKey : matrix.keySet()) {
+            for (Integer columnKey : matrix.get(rowKey).keySet()) {
+                // Perform operations using rowKey and columnKey
+                if (rowKey > maxRow) maxRow = rowKey;
+                if (columnKey > maxCol) maxCol = columnKey;
+                //System.out.println("Row key: " + rowKey + ", Column key: " + columnKey);
+            }
+        }
+        return new NumCoordinate(maxRow, maxCol);
+    }
+
     /*public void displayCells() {
         Integer nRow = 1;
         for (Map<Integer, Cell> innerMap : matrix.values()) {

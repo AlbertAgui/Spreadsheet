@@ -10,7 +10,7 @@ public class Load_store {
             Spreadsheet spreadsheet = new Spreadsheet();
 
             String line;
-            Integer cntRow = 0, cntColum = 0;
+            //Integer cntRow = 0, cntColum = 0;
             Integer nRow = 1;
 
             while ((line = reader.readLine()) != null) {
@@ -18,7 +18,7 @@ public class Load_store {
                 String[] tokens = line.split(";");
                 Integer nColum = 1;
                 NumCoordinate numCoordinate = new NumCoordinate();
-                if(cntColum == 0) cntColum = tokens.length;
+                //if(cntColum == 0) cntColum = tokens.length;
 
                 // Create a new row
                 for (int i = 0; i < tokens.length; i++) {
@@ -46,11 +46,11 @@ public class Load_store {
                 }
                 nRow++;
             }
-            cntRow = nRow - 1;
+            //cntRow = nRow - 1;
 
-            NumCoordinate size = new NumCoordinate(cntRow, cntColum);
+            /*NumCoordinate size = new NumCoordinate(cntRow, cntColum);
             //System.out.println("Size: " + "colum: " +  cntColum + ", row: " + cntRow + "\n");
-            spreadsheet.setSize(size);
+            spreadsheet.setSize(size);*/
             return spreadsheet;
         } catch (IOException e) {
             System.out.println("An error occurred while interpreting the S2V file: " + e.getMessage());
@@ -71,7 +71,7 @@ public class Load_store {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             String line;
 
-            NumCoordinate size = spreadsheet.getSize();
+            NumCoordinate size = spreadsheet.cells.getSize();
             Integer nRow = size.getNumRow();
             Integer nCol = size.getNumColum();
             //System.out.println("Size: " + "colum: " +  nCol + ", row: " + nRow + "\n");
