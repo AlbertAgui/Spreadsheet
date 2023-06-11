@@ -185,7 +185,8 @@ public class ControllerSpreadsheet {
                     if(old_content instanceof ContentFormula) {
                         float new_value = Formula.compute(body, spreadsheet);
                         String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                        LinkedList<String> old_dependencies = tokenize(old_writtencontent);
+                        String old_body = old_writtencontent.replace("=", "");
+                        LinkedList<String> old_dependencies = tokenize(old_body);
                         LinkedList<String> new_dependencies = tokenize(body);
                         updateDependencies(spreadsheet, coordinate, old_dependencies, new_dependencies);
                         //update written, value
@@ -219,7 +220,8 @@ public class ControllerSpreadsheet {
                     Content old_content = old_cell.getContent();
                     if (old_content instanceof ContentFormula) {
                         String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                        LinkedList<String> old_dependencies = tokenize(old_writtencontent);
+                        String old_body = old_writtencontent.replace("=", "");
+                        LinkedList<String> old_dependencies = tokenize(old_body);
                         LinkedList<String> new_dependencies = new LinkedList<>();
                         updateDependencies(spreadsheet, coordinate, old_dependencies, new_dependencies);
                         //update written, value
@@ -245,7 +247,8 @@ public class ControllerSpreadsheet {
                     Content old_content = old_cell.getContent();
                     if (old_content instanceof ContentFormula) {
                         String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                        LinkedList<String> old_dependencies = tokenize(old_writtencontent);
+                        String old_body = old_writtencontent.replace("=", "");
+                        LinkedList<String> old_dependencies = tokenize(old_body);
                         LinkedList<String> new_dependencies = new LinkedList<>();
                         updateDependencies(spreadsheet, coordinate, old_dependencies, new_dependencies);
                         //update written, value

@@ -278,7 +278,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                     NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(next);
                     Object value = spreadsheet.cells.getCell(coor).getContent().getValue(); //MODIFY!!
                     if (value instanceof Float) {
-                        aux_stack.push((String) next);
+                        aux_stack.push(Float.toString((Float) value));
                     } else if (value instanceof String) {
                         System.out.println("Error, text as formula cell dependency!");
                     } else if (value == null) {
