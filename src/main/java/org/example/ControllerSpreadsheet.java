@@ -166,9 +166,10 @@ public class ControllerSpreadsheet {
         Set<NumCoordinate> dependants = new_cell.getDependants();
         for(NumCoordinate dependant : dependants){
             Cell cell = spreadsheet.cells.getCell(dependant);
-            String body = ((ContentFormula)cell.getContent()).getWrittenData();
+            String input = ((ContentFormula)cell.getContent()).getWrittenData();
+            String body = input.replace("=", "");
             float new_value = Formula.compute(body, spreadsheet);
-            updateFormula(spreadsheet, dependant, body, new_value);
+            updateFormula(spreadsheet, dependant, input, new_value);
         }
     }
 
