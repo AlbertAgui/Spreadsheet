@@ -16,6 +16,7 @@ public class Cell {
 
     public Cell(){
         dependants = new Dependants();
+        content = new Content();
     }
 
 
