@@ -22,6 +22,8 @@ public class Cells {
         return false;
     }
 
+    //eraseCell PENDING
+
     public void addCell(NumCoordinate n_coordinate, Cell cell) {
         int row = n_coordinate.getNumRow();
         int colum = n_coordinate.getNumColum();
@@ -40,10 +42,10 @@ public class Cells {
             if(columns.containsKey(colum))
                 return columns.get(colum);
         }
-        return null;
+        return new Cell(); //OJO aixi funciona en tots els casos?? Mirar prerequisists
     }
 
-    public void displayCells() {
+    /*public void displayCells() {
         Integer nRow = 1;
         for (Map<Integer, Cell> innerMap : matrix.values()) {
             Integer nColum = 1;
@@ -53,5 +55,5 @@ public class Cells {
             }
             ++nRow;
         }
-    }
+    }*/
 }

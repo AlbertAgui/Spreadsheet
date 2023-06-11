@@ -1,26 +1,41 @@
 package org.example;
 
+import java.util.Set;
+
 public class Cell {
 
     private Content content;
 
-    public Cell() {
-        this.content = new Content();
+    private Dependants dependants;
+
+    /*public Cell(String contentType) {
+        ContentFactory contentfactory = ContentFactory.getInstance(contentType);
+        this.content = contentfactory.createContent();
+        this.dependants = new Dependants();
+    }*/
+
+    public Cell(){
+        dependants = new Dependants();
     }
 
-    public void setWrittenData(String writtenData) {
-        content.setWrittenData(writtenData);
+
+    public void setContent(Content content) {
+        this.content = content;
     }
 
-    public String getWrittenData() {
-        return content.getWrittenData();
+    public Content getContent() {
+        return content;
     }
 
-    public void setValue(float value) {
-        content.setValue(value);
+    public void addDependant(NumCoordinate dependant) {
+        this.dependants.addDependant(dependant);
     }
 
-    public float getValue() {
-        return content.getValue();
+    public void eraseDependant(NumCoordinate dependant) {
+        this.dependants.eraseDependant(dependant);
+    }
+
+    public Set<NumCoordinate> getDependants() {
+        return this.dependants.getDependants();
     }
 }
