@@ -43,99 +43,91 @@ public class Translate_coordinateTest {
 
     @Test
     public void test_parse1() {
-        Formula.setFormula_body("+ 1 - 2 +5");
-        Formula.tokenize();
+        Formula.tokenize("+ 1 - 2 +5");
         Assert.assertFalse(Formula.is_parseable());//false - redo
     }
 
     @Test
     public void test_parse2() {
-        Formula.setFormula_body("1 - 2 +5+");//false - redo
-        Formula.tokenize();
+        Formula.tokenize("1 - 2 +5+");
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse3() {
-        Formula.setFormula_body("1 * 2 +5");//true
-        Formula.tokenize();
+        Formula.tokenize("1 * 2 +5");//true
         Assert.assertTrue(Formula.is_parseable());
     }
 
     @Test
     public void test_parse4() {
-        Formula.setFormula_body("1");//true
-        Formula.tokenize();
+        Formula.tokenize("1");//true
         Assert.assertTrue(Formula.is_parseable());
     }
 
     @Test
     public void test_parse5() {
-        Formula.setFormula_body("+ 3");//false
-        Formula.tokenize();
+        Formula.tokenize("+ 3");//false
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse6() {
-        Formula.setFormula_body("++ 3");//false
-        Formula.tokenize();
+        Formula.tokenize("++ 3");//false
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse7() {
-        Formula.setFormula_body("+");//false
-        Formula.tokenize();
+        Formula.tokenize("+");//false
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse8() {
-        Formula.setFormula_body("(");//false
-        Formula.tokenize();
+        Formula.tokenize("(");//false
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse9() {
-        Formula.setFormula_body(")");//false
-        Formula.tokenize();
+        Formula.tokenize(")");//false
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse10() {
-        Formula.setFormula_body("(())");
-        Formula.tokenize();
+        Formula.tokenize("(())");
         Assert.assertTrue(Formula.is_parseable());
     }
 
     @Test
     public void test_parse11() {
-        Formula.setFormula_body("(3(");//false
-        Formula.tokenize();
+        Formula.tokenize("(3(");//false
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse12() {
-        Formula.setFormula_body("((3+6)(");//false
-        Formula.tokenize();
+        Formula.tokenize("((3+6)(");//false
         Assert.assertFalse(Formula.is_parseable());
     }
 
     @Test
     public void test_parse13() {
-        Formula.setFormula_body("((3+6)())");// what this should be?? Ilegal in our case, not supported in first approach
-        Formula.tokenize();
+        Formula.tokenize("((3+6)())");// what this should be?? Ilegal in our case, not supported in first approach
         Assert.assertFalse(Formula.is_parseable()); //for this case both checkers should work together??
     }
 
     @Test
     public void test_parse14() {
-        Formula.setFormula_body("((3+6)*(2))");// what this should be??
-        Formula.tokenize();
+        Formula.tokenize("((3+6)*(2))");// what this should be??
+        Assert.assertTrue(Formula.is_parseable());
+    }
+
+    @Test
+    public void test_parse15() {
+        Formula.tokenize("A1");// what this should be??
         Assert.assertTrue(Formula.is_parseable());
     }
 }

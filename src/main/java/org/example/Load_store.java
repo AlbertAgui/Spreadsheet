@@ -27,12 +27,20 @@ public class Load_store {
                         numCoordinate.setNumColum(nColum);
                         numCoordinate.setNumRow(nRow);
                         //System.out.println("load: colum: " + nColum + " row: " + nRow + ", value set: " + t_value + "\n");
-                        spreadsheet.setCellValue(numCoordinate, t_value);
-                    } else {
+                        Cell cell = new Cell();
+                        Content content = new ContentNumerical(); //SHOULD BE CHANGED
+                        content.setValue(t_value);
+                        cell.setContent(content);
+                        spreadsheet.cells.addCell(numCoordinate, cell);
+                    } else { //SHOULD BE CHANGED
                         numCoordinate.setNumColum(nColum);
                         numCoordinate.setNumRow(nRow);
                         //System.out.println("load: colum: " + nColum + " row: " + nRow + " no value!\n");
-                        spreadsheet.setCellValue(numCoordinate, 0); //SHOULD BE CHANGED
+                        Cell cell = new Cell();
+                        Content content = new ContentNumerical(); //SHOULD BE CHANGED
+                        content.setValue(0);
+                        cell.setContent(content);
+                        spreadsheet.cells.addCell(numCoordinate, cell);
                     }
                     nColum++;
                 }
@@ -75,7 +83,15 @@ public class Load_store {
                     }
                     //System.out.println("cnt: Cell: " + j + i + "\n");
                     NumCoordinate coordinate = new NumCoordinate(i,j);
-                    writer.write(Float.toString(spreadsheet.getCellValue(coordinate)));
+
+                    Object value = spreadsheet.cells.getCell(coordinate).getContent().getValue(); //MODIFY!!
+                    if (value instanceof String) {
+                        writer.write((String) value);
+                    } else if (value instanceof Float) {
+                        writer.write(Float.toString((Float) value));
+                    } else {
+                        System.out.println("Error in store: value return type incorrect");
+                    }
                 }
                 if(i != nRow) {
                     writer.newLine();

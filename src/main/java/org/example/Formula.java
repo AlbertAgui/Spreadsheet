@@ -6,12 +6,7 @@ import java.util.regex.Pattern;
 
 public class Formula { //1 + 2-4 //The preference in order used to find could be parametrized
     //Tokenizer
-    public static String formula_body;
     public static LinkedList<String> tokens;
-
-    public static void setFormula_body(String formula_body) {
-        Formula.formula_body = formula_body;
-    }
 
     public static void DisplayTokens(){
         System.out.println("tokens count:" + tokens.size());
@@ -30,7 +25,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             "([A-Z]+)(\\d+)"
     ));
 
-    public static void tokenize(){
+    public static void tokenize(String formula_body){
         tokens = new LinkedList<>();
         while(!formula_body.isEmpty()) {
             for(String tokeninfo : TokenMatchInfos) {
@@ -248,7 +243,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         float l_op = 0, r_op = 0;
         if(is_cell_id(l_operand)) {
             NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(l_operand);
-            l_op = spreadsheet.getCellValue(coor); //add exceptions
+            l_op = (float) spreadsheet.cells.getCell(coor).getContent().getValue(); //add exceptions
             //System.out.println("no es number, " + l_operand + ": " + l_op);
         } else {
             l_op = Float.parseFloat(l_operand);
@@ -257,7 +252,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
         if(is_cell_id(r_operand)) {
             NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(r_operand);
-            r_op = spreadsheet.getCellValue(coor); //add exceptions
+            r_op = (float) spreadsheet.cells.getCell(coor).getContent().getValue(); //add exceptions
             //System.out.println("no es number, " + r_operand + ": " + r_op);
         } else {
             r_op = Float.parseFloat(r_operand);
@@ -279,7 +274,11 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         Stack<String> aux_stack = new Stack<>();
         for (int i = 0; i < postfix.size(); ++i) {
             String next = postfix.get(i);
-            if(is_operand(next)) {
+            if(is_operand(next)) { //MUST BE MODIFIED
+                if(is_cell_id(next)) {
+                    NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(next);
+                    next = Float.toString((float) spreadsheet.cells.getCell(coor).getContent().getValue()); //what if is a string? error!!
+                }
                 aux_stack.push(next);
             } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
                 String down, top;
@@ -313,8 +312,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static float compute(String formula_body, Spreadsheet spreadsheet) {
-        setFormula_body(formula_body);
-        tokenize();
+        tokenize(formula_body);
         if (is_parseable()) {
             //System.out.println("Correct!");
             generate_postfix();

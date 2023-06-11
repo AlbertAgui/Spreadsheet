@@ -5,6 +5,11 @@ import java.util.*;
 public class Dependants {
     private Set<NumCoordinate> dependants;
 
+    public Dependants() {
+        this.dependants = new HashSet<>(); {
+        };
+    }
+
     public void addDependant(NumCoordinate dependant) {
         this.dependants.add(dependant);
     }

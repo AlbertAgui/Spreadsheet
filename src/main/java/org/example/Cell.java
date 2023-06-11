@@ -8,36 +8,34 @@ public class Cell {
 
     private Dependants dependants;
 
-    public Cell() {
-        this.content = new Content();
+    public Cell(String contentType) {
+        ContentFactory contentfactory = ContentFactory.getInstance(contentType);
+        this.content = contentfactory.createContent();
         this.dependants = new Dependants();
     }
 
-    public void setWrittenData(String writtenData) {
-        content.setWrittenData(writtenData);
+    public Cell(){
+        dependants = new Dependants();
     }
 
-    public String getWrittenData() {
-        return content.getWrittenData();
+
+    public void setContent(Content content) {
+        this.content = content;
     }
 
-    public void setValue(float value) {
-        content.setValue(value);
-    }
-
-    public float getValue() {
-        return content.getValue();
+    public Content getContent() {
+        return content;
     }
 
     public void addDependant(NumCoordinate dependant) {
-        dependants.addDependant(dependant);
+        this.dependants.addDependant(dependant);
     }
 
     public void eraseDependant(NumCoordinate dependant) {
-        dependants.eraseDependant(dependant);
+        this.dependants.eraseDependant(dependant);
     }
 
     public Set<NumCoordinate> getDependants() {
-        return dependants.getDependants();
+        return this.dependants.getDependants();
     }
 }
