@@ -270,16 +270,23 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static float evaluate_postfix(Spreadsheet spreadsheet) { //-1 not suported!
-        int value;
         Stack<String> aux_stack = new Stack<>();
         for (int i = 0; i < postfix.size(); ++i) {
             String next = postfix.get(i);
             if(is_operand(next)) { //MUST BE MODIFIED
                 if(is_cell_id(next)) {
                     NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(next);
-                    next = Float.toString((float) spreadsheet.cells.getCell(coor).getContent().getValue()); //what if is a string? error!!
+                    Object value = spreadsheet.cells.getCell(coor).getContent().getValue(); //MODIFY!!
+                    if (value instanceof Float) {
+                        aux_stack.push((String) next);
+                    } else if (value instanceof String) {
+                        System.out.println("Error, text as formula cell dependency!");
+                    } else if (value == null) {
+                        aux_stack.push("0");
+                    }
+                } else {
+                    aux_stack.push(next);
                 }
-                aux_stack.push(next);
             } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
                 String down, top;
                 top = aux_stack.pop();
