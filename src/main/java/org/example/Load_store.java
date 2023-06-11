@@ -33,14 +33,14 @@ public class Load_store {
                         cell.setContent(content);
                         spreadsheet.cells.addCell(numCoordinate, cell);
                     } else { //SHOULD BE CHANGED
-                        numCoordinate.setNumColum(nColum);
+                        /*numCoordinate.setNumColum(nColum);
                         numCoordinate.setNumRow(nRow);
                         //System.out.println("load: colum: " + nColum + " row: " + nRow + " no value!\n");
                         Cell cell = new Cell();
                         Content content = new ContentNumerical(); //SHOULD BE CHANGED
                         content.setValue(0);
                         cell.setContent(content);
-                        spreadsheet.cells.addCell(numCoordinate, cell);
+                        spreadsheet.cells.addCell(numCoordinate, cell);*/
                     }
                     nColum++;
                 }
@@ -89,9 +89,10 @@ public class Load_store {
                         writer.write((String) value);
                     } else if (value instanceof Float) {
                         writer.write(Float.toString((Float) value));
-                    } else {
-                        System.out.println("Error in store: value return type incorrect");
-                    }
+                    } /*else {
+                        //writer.write("");
+                        System.out.println("No data, row: " + i + " col: " + j);
+                    }*/
                 }
                 if(i != nRow) {
                     writer.newLine();
