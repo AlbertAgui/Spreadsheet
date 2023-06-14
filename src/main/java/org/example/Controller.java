@@ -11,6 +11,8 @@ public class Controller {
         NumCoordinate numCoordinate;
         numCoordinate = Translate_coordinate.translate_coordinate_to_int(coordinate);
         ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
+        /*System.out.println("CELL EDITED, STATE:");
+        spreadsheet.cells.displayCells();*/
     }
 
     public static void createEmptySpreadsheet() {
