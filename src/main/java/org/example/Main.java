@@ -7,13 +7,13 @@ public class Main {
         Controller.loadSpreadsheet("Data/t1.txt");
         //Controller.createEmptySpreadsheet();
         //TEST1
-        Controller.editCell("A1","=A3");
+        /*Controller.editCell("A1","=A3");
         Controller.editCell("A2","=A3");
         Controller.editCell("A3","=C1");
         Controller.editCell("C1","=C2");
         Controller.editCell("C2","=C3");
         Controller.editCell("C3","=A3"); //error!!, despres no actualitza
-        Controller.editCell("C3","=B1");
+        Controller.editCell("C3","=B1");*/
         //TEST1 NICE!!
         /*Controller.editCell("A1","=A3");
         Controller.editCell("A2","=A3");
@@ -25,8 +25,8 @@ public class Main {
         //TEST
         /*Controller.editCell("A1","=A1");
         //Controller.editCell("A1","=A2");
-        //Controller.editCell("A1","hey");
-        Controller.editCell("A1","3");*/
+        Controller.editCell("A1","hey");
+        //Controller.editCell("A1","3");*/
         //TEST2
         /*Controller.editCell("A1","=A3");
         Controller.editCell("A3","69");
@@ -46,6 +46,8 @@ public class Main {
         //Controller.editCell("A1","hey");
         //Controller.editCell("A1","=A2");
         //Controller.editCell("C3","=A1+4");
+        //TEST4
+        Controller.editCell("A1","=A2+3+ADD(3;4)5");
         Controller.storeSpreadsheet("Data/t2wr.txt");
     }
 }

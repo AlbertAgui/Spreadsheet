@@ -157,8 +157,12 @@ public class ControllerSpreadsheet {
             Cell cell = spreadsheet.cells.getCell(dependant);
             String input = ((ContentFormula)cell.getContent()).getWrittenData();
             String body = input.replace("=", "");
-            float new_value = Formula.compute(body, spreadsheet);
-            updateFormula(spreadsheet, dependant, input, new_value);
+            Result result = Formula.compute(body, spreadsheet);
+            if(!result.getSuccess()){
+                System.out.println("Error recomputing dependents formula");
+                return;
+            }
+            updateFormula(spreadsheet, dependant, input, (Float) result.getValue());
         }
     }
 
@@ -170,8 +174,12 @@ public class ControllerSpreadsheet {
             Cell cell = spreadsheet.cells.getCell(dependant);
             String input = ((ContentFormula)cell.getContent()).getWrittenData();
             String body = input.replace("=", "");
-            float new_value = Formula.compute(body, spreadsheet);
-            updateFormula(spreadsheet, dependant, input, new_value);
+            Result result = Formula.compute(body, spreadsheet);
+            if(!result.getSuccess()){
+                System.out.println("Error recomputing cell dependents formula");
+                return;
+            }
+            updateFormula(spreadsheet, dependant, input, (Float) result.getValue());
             recomputeCellDependants(spreadsheet, dependant);// TEMPORAL, LOW PERFORMANCE APPROACH
         }
     }
@@ -223,7 +231,12 @@ public class ControllerSpreadsheet {
                     Cell old_cell = spreadsheet.cells.getCell(coordinate);
                     Content old_content = old_cell.getContent();
                     if(old_content instanceof ContentFormula) {
-                        float new_value = Formula.compute(body, spreadsheet);
+                        Result result = Formula.compute(body, spreadsheet);
+                        if(!result.getSuccess()){
+                            System.out.println("Error computing formula");
+                            return;
+                        }
+                        float new_value = (Float) result.getValue();
                         String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                         String old_body = old_writtencontent.replace("=", "");
                         LinkedList<String> old_dependencies = tokenize(old_body);
@@ -239,7 +252,12 @@ public class ControllerSpreadsheet {
                             recomputeCellDependants(spreadsheet, coordinate);
                         }
                     } else {
-                        float new_value = Formula.compute(body, spreadsheet);
+                        Result result = Formula.compute(body, spreadsheet);
+                        if(!result.getSuccess()){
+                            System.out.println("Error computing formula");
+                            return;
+                        }
+                        float new_value = (Float) result.getValue();
                         LinkedList<String> old_dependencies = new LinkedList<>();
                         LinkedList<String> new_dependencies = tokenize(body);
                         updateDependencies(spreadsheet, coordinate, old_dependencies, new_dependencies);
@@ -254,7 +272,12 @@ public class ControllerSpreadsheet {
                         }
                     }
                 } else {
-                    float new_value = Formula.compute(body, spreadsheet);
+                    Result result = Formula.compute(body, spreadsheet);
+                    if(!result.getSuccess()){
+                        System.out.println("Error computing formula");
+                        return;
+                    }
+                    float new_value = (Float) result.getValue();
                     LinkedList<String> old_dependencies = new LinkedList<>();
                     LinkedList<String> new_dependencies = tokenize(body);
                     updateDependencies(spreadsheet, coordinate, old_dependencies, new_dependencies);
