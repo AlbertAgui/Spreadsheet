@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 public class Commands {
     public static String removeFirstWord(String inputString) {
         // Split the string into words
@@ -37,13 +39,35 @@ public class Commands {
         }
     }
 
-    public static String[] RF(String userCommand) {
+    private static String[] RF(String userCommand) {
         String flag = "read_file_command";
         userCommand = removeFirstWord(userCommand);
-        String pattern = "^([a-zA-Z]:)?(/[a-zA-Z0-9_.-]+)+/?$";
+        String pattern = "[\\w\\d]+/[^/]+\\.[\\w\\d]+";
         Matcher matcher = Pattern.compile(pattern).matcher(userCommand);
         if (matcher.matches()) {
-            return new String[]{flag, matcher.group(0)};
+            String filePath = matcher.group(0);
+            try (BufferedReader fileReader = new BufferedReader(new FileReader(filePath))) {
+                String line;
+                while ((line = fileReader.readLine()) != null) {
+                    String command = line.trim();
+                    if (command.startsWith("RF")) {
+                        System.out.println(RF(command));
+                    } else if (command.startsWith("C")) {
+                        System.out.println(C());
+                    } else if (command.startsWith("E")) {
+                        System.out.println(E(command));
+                    } else if (command.startsWith("L")) {
+                        System.out.println(L(command));
+                    } else if (command.startsWith("S")) {
+                        System.out.println(S(command));
+                    } else if (command.equals("quit")) {
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("File not found");
+            }
+            return new String[]{flag, filePath};
         } else {
             System.out.println("error");
             return null;
