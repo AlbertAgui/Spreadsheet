@@ -112,7 +112,7 @@ public class Commands {
         }
     }
 
-    public static void main(String[] args) {
+    public static void input_commands(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String uc = "";
         System.out.println("RF address = read commands from a file \n C for create an spread sheet \n E CellCordinate Input for editing a cell \n L path for load \n S path for Store");
