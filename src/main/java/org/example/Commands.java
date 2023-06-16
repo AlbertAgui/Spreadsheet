@@ -51,15 +51,15 @@ public class Commands {
                 while ((line = fileReader.readLine()) != null) {
                     String command = line.trim();
                     if (command.startsWith("RF")) {
-                        System.out.println(RF(command));
+                        RF(command);
                     } else if (command.startsWith("C")) {
-                        System.out.println(C());
+                        C();
                     } else if (command.startsWith("E")) {
-                        System.out.println(E(command));
+                        E(command);
                     } else if (command.startsWith("L")) {
-                        System.out.println(L(command));
+                        L(command);
                     } else if (command.startsWith("S")) {
-                        System.out.println(S(command));
+                        S(command);
                     } else if (command.equals("quit")) {
                         break;
                     }
@@ -115,10 +115,8 @@ public class Commands {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String uc = "";
-
-//        RF doesnt work yet
+        System.out.println("RF address = read commands from a file \n C for create an spread sheet \n E CellCordinate Input for editing a cell \n L path for load \n S path for Store");
         while (!uc.equals("quit")) {
-            System.out.println("RF address = read commands from a file \n C for create an spread sheet \n E CellCordinate Input for editing a cell \n L path for load \n S path for Store");
             System.out.print("Enter command:");
             uc = scanner.nextLine();
 
