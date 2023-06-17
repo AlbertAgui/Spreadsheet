@@ -51,7 +51,7 @@ public class ControllerSpreadsheet {
     private static String formulaPattern = "^=.*";
     private static String numPattern = "^\\d+$";
 
-    private static String getContentType(String formula_body) {
+    public static String getContentType(String formula_body) {
         Pattern textRegex = Pattern.compile(textPattern);
         Pattern formulaRegex = Pattern.compile(formulaPattern);
         Pattern numRegex = Pattern.compile(numPattern);
@@ -67,8 +67,9 @@ public class ControllerSpreadsheet {
         } else if (textMatcher.matches()) {
             return "Text";
         }
+
         System.out.println("Error content type unsupported" + formula_body);
-        return null;
+        return formula_body;
     }
 
 
@@ -94,7 +95,7 @@ public class ControllerSpreadsheet {
     }
 
 
-    private static void updateDependencies(Spreadsheet spreadsheet, NumCoordinate coordinate, LinkedList<String> old_dependencies, LinkedList<String> new_dependencies){
+    public static void updateDependencies(Spreadsheet spreadsheet, NumCoordinate coordinate, LinkedList<String> old_dependencies, LinkedList<String> new_dependencies){
         LinkedList<String> xor_dependencies = findDistinctElements(old_dependencies, new_dependencies);
         LinkedList<String> add_dependencies = findEqualElements(xor_dependencies, new_dependencies);
         LinkedList<String> erase_dependencies = findEqualElements(xor_dependencies, old_dependencies);
@@ -116,7 +117,7 @@ public class ControllerSpreadsheet {
         }
     }
 
-    private static void updateFormula(Spreadsheet spreadsheet, NumCoordinate coordinate, String input, float value){
+    public static void updateFormula(Spreadsheet spreadsheet, NumCoordinate coordinate, String input, float value){
         Cell new_cell = spreadsheet.cells.getCell(coordinate);
         Content new_content = new_cell.getContent();
         if (!(new_content instanceof ContentFormula)) {
@@ -128,7 +129,7 @@ public class ControllerSpreadsheet {
         spreadsheet.cells.addCell(coordinate, new_cell);
     }
 
-    private static void updateText(Spreadsheet spreadsheet, NumCoordinate coordinate, String value){
+    public static void updateText(Spreadsheet spreadsheet, NumCoordinate coordinate, String value){
         Cell new_cell = spreadsheet.cells.getCell(coordinate);
         Content new_content = new_cell.getContent();
         if (!(new_content instanceof ContentText)) {
@@ -139,7 +140,7 @@ public class ControllerSpreadsheet {
         spreadsheet.cells.addCell(coordinate, new_cell);
     }
 
-    private static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate coordinate, float value){
+    public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate coordinate, float value){
         Cell new_cell = spreadsheet.cells.getCell(coordinate);
         Content new_content = new_cell.getContent();
         if (!(new_content instanceof ContentNumerical)) {
