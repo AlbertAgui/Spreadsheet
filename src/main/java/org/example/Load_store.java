@@ -83,13 +83,25 @@ public class Load_store {
                     //System.out.println("cnt: Cell: " + j + i + "\n");
                     NumCoordinate coordinate = new NumCoordinate(i,j);
 
-                    Object value = spreadsheet.cells.getCell(coordinate).getContent().getValue(); //MODIFY!!
-                    if (value instanceof String) {
-                        writer.write((String) value);
-                    } else if (value instanceof Float) {
-                        writer.write(Float.toString((Float) value));
-                    } //MODIFY!! add something else??
+                    Cell cell = spreadsheet.cells.getCell(coordinate);
+                    Content content = cell.getContent();
+
+                    if (content instanceof ContentFormula) {
+                        writer.write(((ContentFormula) content).getWrittenData());
+                    } else if (content instanceof ContentText) {
+                        writer.write(((ContentText) content).getValue());
+                    } else if (content instanceof ContentNumerical) {
+                        writer.write(Float.toString(((ContentNumerical) content).getValue()));
+                    }
                 }
+
+//                    Object value = spreadsheet.cells.getCell(coordinate).getContent().getValue(); //MODIFY!!
+//                    if (value instanceof String) {
+//                        writer.write((String) value);
+//                    } else if (value instanceof Float) {
+//                        writer.write(Float.toString((Float) value));
+//                    } //MODIFY!! add something else??
+//                }
                 if(i != nRow) {
                     writer.newLine();
                 }
