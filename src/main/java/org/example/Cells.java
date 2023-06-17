@@ -1,7 +1,9 @@
 package org.example;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Cells {
     private Map<Integer, Map<Integer, Cell>> matrix;
@@ -45,15 +47,39 @@ public class Cells {
         return new Cell(); //OJO aixi funciona en tots els casos?? Mirar prerequisists
     }
 
-    /*public void displayCells() {
-        Integer nRow = 1;
-        for (Map<Integer, Cell> innerMap : matrix.values()) {
-            Integer nColum = 1;
-            for (Cell cell : innerMap.values()) {
-                System.out.println("Colum: "+ nColum + " Row: " + nRow + " value: " + cell.getValue());
-                ++nColum;
+    public NumCoordinate getSize() {
+        Integer maxRow = 0;
+        Integer maxCol = 0;
+        for (Integer rowKey : matrix.keySet()) {
+            for (Integer columnKey : matrix.get(rowKey).keySet()) {
+                // Perform operations using rowKey and columnKey
+                if (rowKey > maxRow) maxRow = rowKey;
+                if (columnKey > maxCol) maxCol = columnKey;
+                //System.out.println("Row key: " + rowKey + ", Column key: " + columnKey);
             }
-            ++nRow;
         }
-    }*/
+        return new NumCoordinate(maxRow, maxCol);
+    }
+
+    public Set<NumCoordinate> getCoordinateSet() {
+        Set<NumCoordinate> coordinates = new HashSet<>();
+        for (Integer rowKey : matrix.keySet()) {
+            for (Integer columnKey : matrix.get(rowKey).keySet()) {
+                // Perform operations using rowKey and columnKey
+                NumCoordinate coordinate = new NumCoordinate(rowKey, columnKey);
+                coordinates.add(coordinate);
+                //System.out.println("Row key: " + rowKey + ", Column key: " + columnKey);
+            }
+        }
+        return coordinates;
+    }
+
+    public void displayCells() {
+        for (Integer rowKey : matrix.keySet()) {
+            for (Integer columnKey : matrix.get(rowKey).keySet()) {
+                Object object = matrix.get(rowKey).get(columnKey).getContent().getValue();
+                System.out.println("Row: " + rowKey + ", Colum: "+ columnKey + " value: " + object);
+            }
+        }
+    }
 }

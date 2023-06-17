@@ -6,9 +6,7 @@ import java.util.regex.Pattern;
 
 public class Formula { //1 + 2-4 //The preference in order used to find could be parametrized
     //Tokenizer
-    public static LinkedList<String> tokens;
-
-    public static void DisplayTokens(){
+    public static void DisplayTokens(LinkedList<String> tokens){
         System.out.println("tokens count:" + tokens.size());
         tokens.forEach(tk ->{
             System.out.println(tk);
@@ -16,45 +14,52 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static final List<String> TokenMatchInfos = new ArrayList<>(Arrays.asList( //static="class instance, unique", final="static, constant"
-            "\s",//is this needed?
+            //"\s",//is this needed?
             "[+-]",
             "[*/]",
             "\\(",
             "\\)",
             "[0-9]+",//093 will be supported... is it fine?
-            "([A-Z]+)(\\d+)"
+            "([A-Z]+)(\\d+)",
+            "([A-Z]+)\\([^\\s]*\\)" //function
     ));
 
-    public static void tokenize(String formula_body){
-        tokens = new LinkedList<>();
+
+    public static Result<LinkedList<String>> tokenize(String formula_body) {
+        LinkedList<String> tokens = new LinkedList<>();
+        Boolean found = false;
         while(!formula_body.isEmpty()) {
+
             for(String tokeninfo : TokenMatchInfos) {
                 //find only if are at start of string! take into account if future strings are a subset of others at start!!
                 Pattern p = Pattern.compile('^'+tokeninfo);
                 Matcher m = p.matcher(formula_body);
                 if (m.find()) {
+                    found = true;
                     String token = m.group(0);
                     //System.out.println("tokencomp: \"" + token + "\"");
                     if (!token.equals(" ")) {
                         tokens.add(token);
                     }
-
                     formula_body = m.replaceFirst("");
-                    //break;
                 }
-                //break;
+            }
+            if (!found) {
+                System.out.println("Invalid token: \"" + formula_body + "\"");
+                return new Result<>(tokens, false);
             }
         }
+        return new Result<>(tokens, true);
     }
 
 
 
     //Parsing
     private static Boolean is_numerical(String token) {
-        return is_operand(token) || is_operator(token) || is_cell_id(token);
+        return is_operand(token) || is_operator(token);
     }
     public static Boolean is_operand(String token){
-        return is_number(token) || is_cell_id(token);
+        return is_number(token) || is_cell_id(token) || is_function(token);
     }
 
     public static Boolean is_cell_id(String token){
@@ -63,6 +68,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
     public static Boolean is_number(String token){
         return token.matches("[0-9]+");
+    }
+
+    public static Boolean is_function(String token) {
+        return token.matches("([A-Z]+)\\([^\\s]*\\)");
     }
 
     public static Boolean is_operator(String token){
@@ -95,11 +104,11 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         return false;
     }
 
-    public static Boolean is_parseable() {
-        return is_num_balanced() && is_claw_balanced();
+    public static Boolean is_parseable(LinkedList<String> tokens) {
+        return is_num_balanced(tokens) && is_claw_balanced(tokens);
     }
 
-    public static Boolean is_num_balanced(){ //Need to be improved, not just extended!!(use precedence order!)
+    public static Boolean is_num_balanced(LinkedList<String> tokens){ //Need to be improved, not just extended!!(use precedence order!)
         Stack<String> aux_stack = new Stack<>();
         for(int i = 0; i < tokens.size(); ++i){
             String next = tokens.get(i);
@@ -139,7 +148,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     //Balanced claw rule
-    public static Boolean is_claw_balanced(){
+    public static Boolean is_claw_balanced(LinkedList<String> tokens){
         Stack<String> aux_stack = new Stack<>();
         for (int i = 0; i < tokens.size(); ++i) {
             String next = tokens.get(i);
@@ -170,8 +179,6 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
 
     //Generate postfix
-    private static LinkedList<String> postfix;
-
     private static Integer get_precedence(String token) {
         if (is_closed_claw(token)) return 3;
         if (is_highp_operator(token)) return 2;
@@ -181,15 +188,15 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         return -1; //error, will be modified
     }
 
-    public static void DisplayPostfix(){
+    public static void DisplayPostfix(LinkedList<String> postfix){
         System.out.println("postfix count:" + postfix.size());
         postfix.forEach(pf ->{
             System.out.println(pf);
         });
     }
 
-    public static void generate_postfix() {
-        postfix = new LinkedList<>();
+    public static LinkedList<String> generate_postfix(LinkedList<String> tokens) {
+        LinkedList<String> postfix = new LinkedList<>();
         Stack<String> aux_stack = new Stack<>();
         for (int i = 0; i < tokens.size(); ++i) {
             String next = tokens.get(i);
@@ -233,6 +240,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         while (!aux_stack.isEmpty()) {
             postfix.add(aux_stack.pop());
         }
+        return postfix;
     }
 
 
@@ -269,17 +277,24 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         return result;
     }
 
-    public static float evaluate_postfix(Spreadsheet spreadsheet) { //-1 not suported!
-        int value;
+    public static float evaluate_postfix(Spreadsheet spreadsheet, LinkedList<String> postfix) { //-1 not suported!
         Stack<String> aux_stack = new Stack<>();
         for (int i = 0; i < postfix.size(); ++i) {
             String next = postfix.get(i);
             if(is_operand(next)) { //MUST BE MODIFIED
                 if(is_cell_id(next)) {
                     NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(next);
-                    next = Float.toString((float) spreadsheet.cells.getCell(coor).getContent().getValue()); //what if is a string? error!!
+                    Object value = spreadsheet.cells.getCell(coor).getContent().getValue(); //MODIFY!!
+                    if (value instanceof Float) {
+                        aux_stack.push(Float.toString((Float) value));
+                    } else if (value instanceof String) {
+                        System.out.println("Error, text as formula cell dependency!");
+                    } else if (value == null) {
+                        aux_stack.push("0");
+                    }
+                } else {
+                    aux_stack.push(next);
                 }
-                aux_stack.push(next);
             } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
                 String down, top;
                 top = aux_stack.pop();
@@ -291,38 +306,25 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         return Float.parseFloat(aux_stack.pop());
     }
 
-    private static void addDependants() {
-        Set<NumCoordinate> dependants;
-        for(int i = 0; i < tokens.size(); ++i) {
-            String next = tokens.get(i);
-            if (is_cell_id(next)) { //belongs to a set of tokens not treaten here
-
-            }
+    public static Result<Float> compute(String formula_body, Spreadsheet spreadsheet) {
+        boolean success = true;
+        float value = 0;
+        Result<LinkedList<String>> result = tokenize(formula_body);
+        LinkedList<String> tokens = result.getValue();
+        if(!result.getSuccess()) {
+            System.out.println("No tokenizable formula!");
+            success = false;
         }
-    }
-
-    private static void eraseDependants() {
-        Set<NumCoordinate> dependants;
-        for(int i = 0; i < tokens.size(); ++i) {
-            String next = tokens.get(i);
-            if (is_cell_id(next)) { //belongs to a set of tokens not treaten here
-
-            }
-        }
-    }
-
-    public static float compute(String formula_body, Spreadsheet spreadsheet) {
-        tokenize(formula_body);
-        if (is_parseable()) {
-            //System.out.println("Correct!");
-            generate_postfix();
-            addDependants();
-            eraseDependants();
-            return evaluate_postfix(spreadsheet);
-        } else {
+        else if (!is_parseable(tokens)) {
             System.out.println("No parseable formula!");
-            return 0;
+            success = false;
         }
+        else {
+            LinkedList<String> postfix = generate_postfix(tokens);
+            value = evaluate_postfix(spreadsheet, postfix);
+        }
+        //System.out.println("Correct!");
+        return new Result<>(value, success);
     }
 
 }
