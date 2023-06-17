@@ -59,10 +59,13 @@ public class Load_store {
                 System.out.println("Load: circular dependency");
                 return null;
             }
+            ControllerSpreadsheet.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
             //add compute cell values all spreadsheet
             return spreadsheet;
         } catch (IOException e) {
             System.out.println("Error loading spreadsheet, path: \"" + s2vFilePath + "\", error message: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             try {
                 if (reader != null) {
@@ -74,6 +77,7 @@ public class Load_store {
         }
         return null;
     }
+
 
 
     static void storespreadsheet(String s2vFilePath, Spreadsheet spreadsheet) {

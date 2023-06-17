@@ -151,19 +151,52 @@ public class ControllerSpreadsheet {
         spreadsheet.cells.addCell(coordinate, new_cell);
     }
 
-    private static void recomputeDependant(Spreadsheet spreadsheet, NumCoordinate coordinate) {
-        Cell new_cell = spreadsheet.cells.getCell(coordinate);
-        Set<NumCoordinate> dependants = new_cell.getDependants();
-        for(NumCoordinate dependant : dependants){
-            Cell cell = spreadsheet.cells.getCell(dependant);
-            String input = ((ContentFormula)cell.getContent()).getWrittenData();
+
+    private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) throws Exception {
+        visited.add(numCoordinate);
+        Cell cell = spreadsheet.cells.getCell(numCoordinate);
+        Content content = cell.getContent();
+        if(content instanceof ContentFormula) {
+            String input = ((ContentFormula) content).getWrittenData();
             String body = input.replace("=", "");
-            Result result = Formula.compute(body, spreadsheet);
-            if(!result.getSuccess()){
-                System.out.println("Error recomputing dependents formula");
-                return;
+            LinkedList <String> dependencies = tokenize(body);
+            if(dependencies.isEmpty()) {
+                stack.add(numCoordinate);
+            } else {
+                for (String dependency : dependencies) {
+                    NumCoordinate coordinate;
+                    coordinate = Translate_coordinate.translate_coordinate_to_int(dependency);
+                    if(!visited.contains(coordinate)) {
+                        recomputeCell(spreadsheet, coordinate, stack, visited);
+                    }
+                }
+                stack.add(numCoordinate);
             }
-            updateFormula(spreadsheet, dependant, input, (Float) result.getValue());
+        } else if (content instanceof ContentText) {
+            throw new Exception("load computing spreadsheet text dependency, this shouldn't happen");
+        }
+    }
+
+
+    public static void recomputeSpreadsheet(Spreadsheet spreadsheet) throws Exception {
+        Set<NumCoordinate> visited = new HashSet<>();
+        for (NumCoordinate coordinate: spreadsheet.cells.getCoordinateSet()) {
+            if(!visited.contains(coordinate)) {
+                Queue<NumCoordinate> queue = new LinkedList<>();
+                recomputeCell(spreadsheet, coordinate, queue, visited);
+                while(!queue.isEmpty()) {
+                    NumCoordinate numCoordinate = queue.remove();
+                    Cell cell = spreadsheet.cells.getCell(numCoordinate);
+                    String input = ((ContentFormula)cell.getContent()).getWrittenData();
+                    String body = input.replace("=", "");
+                    Result result = Formula.compute(body, spreadsheet);
+                    if(!result.getSuccess()){ //should happen?? error controll is before
+                        System.out.println("Error recomputing cell dependents formula");
+                        return;
+                    }
+                    updateFormula(spreadsheet, numCoordinate, input, (Float) result.getValue());
+                }
+            }
         }
     }
 
