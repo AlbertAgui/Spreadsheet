@@ -11,19 +11,18 @@ public class Controller {
         NumCoordinate numCoordinate;
         numCoordinate = Translate_coordinate.translate_coordinate_to_int(coordinate);
         ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
-        /*System.out.println("CELL EDITED, STATE:");
-        spreadsheet.cells.displayCells();*/
+//        spreadsheet.printSpreadsheet();
     }
 
     public static void createEmptySpreadsheet() {
-        spreadsheet = new Spreadsheet();
+        spreadsheet = new Spreadsheet(); spreadsheet.printSpreadsheet();
     }
 
     public static void loadSpreadsheet(String path) {
-        spreadsheet = Load_store.loadspreadsheet(path);
+        spreadsheet = Load_store.loadspreadsheet(path); spreadsheet.printSpreadsheet();
     }
 
     public static void storeSpreadsheet(String path) {
-        Load_store.storespreadsheet(path, spreadsheet);
+        Load_store.storespreadsheet(path, spreadsheet); spreadsheet.printSpreadsheet();
     }
 }
