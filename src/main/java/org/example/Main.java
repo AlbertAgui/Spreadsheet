@@ -5,7 +5,7 @@ package org.example;
 public class Main {
     public static void main(String[] args) {
         Commands.input_commands(null);
-        Controller.loadSpreadsheet("Data/t1.txt");
+//        Controller.loadSpreadsheet("Data/t1.txt");
         //Controller.createEmptySpreadsheet();
         //TEST1
         /*Controller.editCell("A1","=A3");
@@ -48,7 +48,7 @@ public class Main {
         //Controller.editCell("A1","=A2");
         //Controller.editCell("C3","=A1+4");
         //TEST4
-        Controller.editCell("A1","=A2+3+ADD(3;4)5");
-        Controller.storeSpreadsheet("Data/t2wr.txt");
+//        Controller.editCell("A1","=A2+3+ADD(3;4)5");
+//        Controller.storeSpreadsheet("Data/t2wr.txt");
     }
 }
