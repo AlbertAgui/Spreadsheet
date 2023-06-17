@@ -1,6 +1,7 @@
 package org.example;
 
 import java.io.*;
+import java.util.LinkedList;
 
 public class Load_store {
     static Spreadsheet loadspreadsheet(String s2vFilePath) {
@@ -12,33 +13,59 @@ public class Load_store {
 
             String line;
             Integer nRow = 1;
-
             while ((line = reader.readLine()) != null) {
                 // Split the line by semicolon
                 String[] tokens = line.split(";");
                 Integer nColum = 1;
-                NumCoordinate numCoordinate = new NumCoordinate();
 
                 // Create a new row
                 for (int i = 0; i < tokens.length; i++) {
                     if (!tokens[i].isEmpty()) {
-                        float t_value = Float.parseFloat(tokens[i]);
-                        numCoordinate.setNumColum(nColum);
-                        numCoordinate.setNumRow(nRow);
                         //System.out.println("load: colum: " + nColum + " row: " + nRow + ", value set: " + t_value + "\n");
-                        Cell cell = new Cell();
-                        Content content = new ContentNumerical(); //SHOULD BE CHANGED
-                        content.setValue(t_value);
-                        cell.setContent(content);
-                        spreadsheet.cells.addCell(numCoordinate, cell);
+                        String input = tokens[i];
+                        String inputType = ControllerSpreadsheet.getContentType(input);
+                        NumCoordinate numCoordinate = new NumCoordinate(nRow, nColum);
+                        switch (inputType) {
+                            case "Formula" :
+                                String body = input.replace("=", "");
+                                Result result = Formula.compute(body, spreadsheet);
+                                if(!result.getSuccess()){
+                                    System.out.println("Error computing formula");
+                                    return null;
+                                }
+                                float new_value = (Float) result.getValue(); //Have to be computed properlly
+                                LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(body);
+                                ControllerSpreadsheet.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
+                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, new_value); //CHANGE VALUE
+                                break;
+                            case "Text" :
+                                ControllerSpreadsheet.updateText(spreadsheet, numCoordinate, input);
+                                break;
+                            case "Numerical" :
+                                float t_value = Float.parseFloat(input);
+                                ControllerSpreadsheet.updateNumerical(spreadsheet, numCoordinate, t_value);
+                                break;
+                            default:
+                                System.out.println("Load: No suported input" + inputType);
+                                return null;
+                        }
                     }
                     nColum++;
                 }
                 nRow++;
             }
+
+            if(ControllerSpreadsheet.hasSpreadsheetCircularDependencies(spreadsheet)) {
+                System.out.println("Load: circular dependency");
+                return null;
+            }
+            ControllerSpreadsheet.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
+            //add compute cell values all spreadsheet
             return spreadsheet;
         } catch (IOException e) {
             System.out.println("Error loading spreadsheet, path: \"" + s2vFilePath + "\", error message: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             try {
                 if (reader != null) {
@@ -50,6 +77,7 @@ public class Load_store {
         }
         return null;
     }
+
 
 
     static void storespreadsheet(String s2vFilePath, Spreadsheet spreadsheet) {
