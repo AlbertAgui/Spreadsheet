@@ -14,7 +14,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static final List<String> TokenMatchInfos = new ArrayList<>(Arrays.asList( //static="class instance, unique", final="static, constant"
-            //"\s",//is this needed?
+            "\s",//is this needed?
             "[+-]",
             "[*/]",
             "\\(",
@@ -247,20 +247,14 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     public static float operate(Spreadsheet spreadsheet, String operator, String l_operand, String r_operand) {
         float l_op = 0, r_op = 0;
         if(is_cell_id(l_operand)) { //THIS HAPPENS??
-            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(l_operand);
-            Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
-            l_op = (float) cell.getContent().getValue(); //add exceptions
-            //System.out.println("no es number, " + l_operand + ": " + l_op);
+            throw new RuntimeException("Evaluate postfix: operand: " + l_operand + "should be numerical");
         } else {
             l_op = Float.parseFloat(l_operand);
             //System.out.println("l_op: " + l_op);
         }
 
         if(is_cell_id(r_operand)) {
-            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(r_operand);
-            Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
-            r_op = (float) cell.getContent().getValue(); //add exceptions
-            //System.out.println("no es number, " + r_operand + ": " + r_op);
+            throw new RuntimeException("Evaluate postfix: operand: " + r_operand + "should be numerical");
         } else {
             r_op = Float.parseFloat(r_operand);
             //System.out.println("r_op: " + r_op);
@@ -277,97 +271,41 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
 
-    public static float operateLoad(Spreadsheet spreadsheet, String operator, String l_operand, String r_operand) {
-        float l_op = 0, r_op = 0;
-        if(is_cell_id(l_operand)) { //THIS HAPPENS??
-            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(l_operand);
-            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate);
-            l_op = (float) cell.getContent().getValue(); //add exceptions
-            //System.out.println("no es number, " + l_operand + ": " + l_op);
-        } else {
-            l_op = Float.parseFloat(l_operand);
-            //System.out.println("l_op: " + l_op);
-        }
-
-        if(is_cell_id(r_operand)) {
-            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(r_operand);
-            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate);
-            r_op = (float) cell.getContent().getValue(); //add exceptions
-            //System.out.println("no es number, " + r_operand + ": " + r_op);
-        } else {
-            r_op = Float.parseFloat(r_operand);
-            //System.out.println("r_op: " + r_op);
-        }
-
-        float result = switch (operator) {
-            case "+" -> l_op + r_op;
-            case "-" -> l_op - r_op;
-            case "*" -> l_op * r_op;
-            case "/" -> l_op / r_op;
-            default -> throw new RuntimeException("Evaluate postfix: operator: " + operator + "not supported"); //error should not be needed
-        };
-        return result;
-    }
 
     public static float evaluate_postfix(Spreadsheet spreadsheet, LinkedList<String> postfix) { //-1 not suported!
         Stack<String> aux_stack = new Stack<>();
-        for (int i = 0; i < postfix.size(); ++i) {
-            String next = postfix.get(i);
-            if(is_operand(next)) { //MUST BE MODIFIED
-                if(is_cell_id(next)) {
-                    NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
-                    Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
-                    Object value = cell.getContent().getValue(); //MODIFY!!
-                    if (value instanceof Float) {
-                        aux_stack.push(Float.toString((Float) value));
-                    } else if (value instanceof String) {
-                        throw new RuntimeException("Evaluate postfix: text as formula cell dependency!");
-                    } else if (value == null) {
-                        aux_stack.push("0");
+        try {
+            for (int i = 0; i < postfix.size(); ++i) {
+                String next = postfix.get(i);
+                if (is_operand(next)) { //MUST BE MODIFIED
+                    if (is_cell_id(next)) {
+                        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                        Content content = cell.getContent();
+                        Float value = (float) 0;
+                        if (content instanceof ContentFormula) {
+                            value = ((ContentFormula) content).getValue();
+                        } else if (content instanceof ContentText) {
+                            throw new RuntimeException("Cell content text is a formula cell dependency!");
+                        } else if (content instanceof ContentNumerical) {
+                            value = ((ContentNumerical) content).getValue();
+                        }
+                        aux_stack.push(Float.toString(value));
+                    } else {
+                        aux_stack.push(next);
                     }
-                } else {
-                    aux_stack.push(next);
+                } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
+                    String down, top;
+                    top = aux_stack.pop();
+                    down = aux_stack.pop();
+                    aux_stack.push(Float.toString(operate(spreadsheet, next, down, top))); //ojo format!!
                 }
-            } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
-                String down, top;
-                top = aux_stack.pop();
-                down = aux_stack.pop();
-                aux_stack.push(Float.toString(operate(spreadsheet, next, down, top))); //ojo format!!
+                //System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
             }
-            //System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
+            return Float.parseFloat(aux_stack.pop());
+        } catch (Exception e) {
+            throw new RuntimeException("Evaluate postfix: " + e.getMessage());
         }
-        return Float.parseFloat(aux_stack.pop());
-    }
-
-
-    public static float evaluatePostfixLoad(Spreadsheet spreadsheet, LinkedList<String> postfix) { //-1 not suported!
-        Stack<String> aux_stack = new Stack<>();
-        for (int i = 0; i < postfix.size(); ++i) {
-            String next = postfix.get(i);
-            if(is_operand(next)) { //MUST BE MODIFIED
-                if(is_cell_id(next)) {
-                    NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
-                    Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate);
-                    Object value = cell.getContent().getValue(); //MODIFY!!
-                    if (value instanceof Float) {
-                        aux_stack.push(Float.toString((Float) value));
-                    } else if (value instanceof String) {
-                        throw new RuntimeException("Evaluate postfix: text as formula cell dependency!");
-                    } else if (value == null) {
-                        aux_stack.push("0");
-                    }
-                } else {
-                    aux_stack.push(next);
-                }
-            } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
-                String down, top;
-                top = aux_stack.pop();
-                down = aux_stack.pop();
-                aux_stack.push(Float.toString(operateLoad(spreadsheet, next, down, top))); //ojo format!!
-            }
-            //System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
-        }
-        return Float.parseFloat(aux_stack.pop());
     }
 
 
@@ -383,24 +321,6 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         } catch (Exception e) {
             throw new RuntimeException("Compute: " + e.getMessage());
         }
-        //System.out.println("Correct!");
-        return value;
-    }
-
-
-    public static Float computeLoad(String formula_body, Spreadsheet spreadsheet) {
-        float value = 0;
-        try {
-            LinkedList<String> tokens = tokenize(formula_body);
-            if (!is_parseable(tokens)) {
-                throw new RuntimeException("No parseable tokens");
-            }
-            LinkedList<String> postfix = generate_postfix(tokens);
-            value = evaluatePostfixLoad(spreadsheet, postfix);
-        } catch (Exception e) {
-            throw new RuntimeException("Compute: " + e.getMessage());
-        }
-        //System.out.println("Correct!");
         return value;
     }
 

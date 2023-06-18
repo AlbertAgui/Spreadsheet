@@ -16,25 +16,27 @@ public class ControllerSpreadsheet {
             "([A-Z]+)(\\d+)"
     ));
 
-    public static LinkedList<String> tokenize(String formula_body){
+
+    public static LinkedList<String> tokenize(String formula_body) {
         LinkedList<String> tokens = new LinkedList<>();
-        String regex = "([A-Z]+)(\\d+)";
         while(!formula_body.isEmpty()) {
+            Boolean found = false;
             for(String tokeninfo : TokenMatchInfos) {
                 //find only if are at start of string! take into account if future strings are a subset of others at start!!
                 Pattern p = Pattern.compile('^'+tokeninfo);
                 Matcher m = p.matcher(formula_body);
                 if (m.find()) {
+                    found = true;
                     String token = m.group(0);
                     //System.out.println("tokencomp: \"" + token + "\"");
-                    if (token.matches(regex)) {
+                    if (token.equals(TokenMatchInfos.get(6))) { //cell id
                         tokens.add(token);
                     }
-
                     formula_body = m.replaceFirst("");
-                    //break;
                 }
-                //break;
+            }
+            if (!found) {
+                throw new RuntimeException("Tokenize: Invalid token: \"" + formula_body + "\"");
             }
         }
         return tokens;
@@ -97,7 +99,7 @@ public class ControllerSpreadsheet {
         for (String element : add_dependencies) { //OJO
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
-            Cell cell = getCellExisting(spreadsheet,numCoordinate);
+            Cell cell = getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.addDependant(coordinate);
             cell.setDependants(dependants);
@@ -107,33 +109,7 @@ public class ControllerSpreadsheet {
         for (String element : erase_dependencies) {
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
-            Cell cell = getCellExisting(spreadsheet,numCoordinate);
-            Dependants dependants = cell.getDependants();
-            dependants.eraseDependant(coordinate);
-            cell.setDependants(dependants);
-            spreadsheet.cells.addCell(numCoordinate, cell);
-        }
-    }
-
-    public static void updateLoadCellDependencies(Spreadsheet spreadsheet, NumCoordinate coordinate, LinkedList<String> old_dependencies, LinkedList<String> new_dependencies){
-        LinkedList<String> xor_dependencies = findDistinctElements(old_dependencies, new_dependencies);
-        LinkedList<String> add_dependencies = findEqualElements(xor_dependencies, new_dependencies);
-        LinkedList<String> erase_dependencies = findEqualElements(xor_dependencies, old_dependencies);
-
-        for (String element : add_dependencies) { //OJO
-            NumCoordinate numCoordinate;
-            numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
-            Cell cell = getCellAny(spreadsheet,numCoordinate);
-            Dependants dependants = cell.getDependants();
-            dependants.addDependant(coordinate);
-            cell.setDependants(dependants);
-            spreadsheet.cells.addCell(numCoordinate, cell);
-        }
-
-        for (String element : erase_dependencies) {
-            NumCoordinate numCoordinate;
-            numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
-            Cell cell = getCellAny(spreadsheet,numCoordinate);
+            Cell cell = getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.eraseDependant(coordinate);
             cell.setDependants(dependants);
@@ -240,7 +216,7 @@ public class ControllerSpreadsheet {
         localVisited.add(numCoordinate);
         globalVisited.add(numCoordinate);
 
-        Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate); //ANY BECAUSE CELLS CAN BE NEW!
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY BECAUSE CELLS CAN BE NEW!
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for (NumCoordinate dependant : dependants) {
             if (!globalVisited.contains(dependant)){
@@ -306,7 +282,6 @@ public class ControllerSpreadsheet {
                     updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
                     updateFormula(spreadsheet, numCoordinate, input, newValue);
                     if (hasCellCircularDependency(spreadsheet, numCoordinate)) {
-                        System.out.println("has Circular dependency " + inputType);
                         updateDependencies(spreadsheet, numCoordinate, new_dependencies, old_dependencies); //redo dependencies
 
                         //UNDO UPDATE FORMULA
@@ -315,6 +290,7 @@ public class ControllerSpreadsheet {
                         } else {
                             spreadsheet.cells.addCell(numCoordinate, old_cell);
                         }
+                        throw new RuntimeException("Circular dependency");
                     } else {
                         //recompute values
                         recomputeCellDependants(spreadsheet, numCoordinate);
@@ -334,7 +310,7 @@ public class ControllerSpreadsheet {
                         }
                     }
                     //update written, value
-                    updateText(spreadsheet, numCoordinate, formulaBody);
+                    updateText(spreadsheet, numCoordinate, input);
                     //recompute values
                     recomputeCellDependants(spreadsheet, numCoordinate);
                     break;
@@ -351,7 +327,7 @@ public class ControllerSpreadsheet {
                         }
                     }
                     //update written, value
-                    newValue = Float.parseFloat(formulaBody);
+                    newValue = Float.parseFloat(input);
                     updateNumerical(spreadsheet, numCoordinate, newValue);
                     //recompute values
                     recomputeCellDependants(spreadsheet, numCoordinate);

@@ -28,9 +28,9 @@ public class Load_store { // catch (Exception e)
                         switch (inputType) {
                             case "Formula":
                                 String formulaBody = input.replace("=", "");
-                                float newValue = Formula.computeLoad(formulaBody, spreadsheet);
+                                float newValue = Formula.compute(formulaBody, spreadsheet);
                                 LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(formulaBody);
-                                ControllerSpreadsheet.updateLoadCellDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
+                                ControllerSpreadsheet.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
                                 ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, newValue); //CHANGE VALUE
                                 break;
                             case "Text":
