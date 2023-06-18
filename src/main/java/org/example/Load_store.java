@@ -37,7 +37,8 @@ public class Load_store { // catch (Exception e)
                                 ControllerSpreadsheet.updateText(spreadsheet, numCoordinate, input);
                                 break;
                             case "Numerical":
-                                float t_value = Float.parseFloat(input);
+                                String inputTrim = input.trim(); //ERASE SPACES
+                                float t_value = Float.parseFloat(inputTrim);
                                 ControllerSpreadsheet.updateNumerical(spreadsheet, numCoordinate, t_value);
                                 break;
                             default:

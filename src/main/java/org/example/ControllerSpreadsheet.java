@@ -45,7 +45,7 @@ public class ControllerSpreadsheet {
 
     private static String textPattern = "^(?!=).*$";
     private static String formulaPattern = "^=.*$";
-    private static String numPattern = "^[-+]?\\d*\\.?\\d+$";
+    private static String numPattern = "^\s*[-+]?\\d*\\.?\\d+\s*$";
 
     public static String getContentType(String formula_body) {
         Pattern textRegex = Pattern.compile(textPattern);
@@ -329,7 +329,8 @@ public class ControllerSpreadsheet {
                         }
                     }
                     //update written, value
-                    newValue = Float.parseFloat(input);
+                    String inputTrim = input.trim(); //ERASE SPACES
+                    newValue = Float.parseFloat(inputTrim);
                     updateNumerical(spreadsheet, numCoordinate, newValue);
                     //recompute values
                     recomputeCellDependants(spreadsheet, numCoordinate);
