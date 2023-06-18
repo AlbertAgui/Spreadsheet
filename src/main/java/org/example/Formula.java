@@ -25,11 +25,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     ));
 
 
-    public static Result<LinkedList<String>> tokenize(String formula_body) {
+    public static LinkedList<String> tokenize(String formula_body) {
         LinkedList<String> tokens = new LinkedList<>();
-        Boolean found = false;
         while(!formula_body.isEmpty()) {
-
+            Boolean found = false;
             for(String tokeninfo : TokenMatchInfos) {
                 //find only if are at start of string! take into account if future strings are a subset of others at start!!
                 Pattern p = Pattern.compile('^'+tokeninfo);
@@ -45,11 +44,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 }
             }
             if (!found) {
-                System.out.println("Invalid token: \"" + formula_body + "\"");
-                return new Result<>(tokens, false);
+                throw new RuntimeException("Tokenize: Invalid token: \"" + formula_body + "\"");
             }
         }
-        return new Result<>(tokens, true);
+        return tokens;
     }
 
 
@@ -184,8 +182,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         if (is_highp_operator(token)) return 2;
         if (is_lowp_operator(token)) return 1;
         if (is_open_claw(token)) return 0;
-        System.out.println("error in precedence");
-        return -1; //error, will be modified
+        throw new RuntimeException("Get precedence: precedence not found");
     }
 
     public static void DisplayPostfix(LinkedList<String> postfix){
@@ -274,7 +271,40 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             case "-" -> l_op - r_op;
             case "*" -> l_op * r_op;
             case "/" -> l_op / r_op;
-            default -> -1; //error should not be needed
+            default -> throw new RuntimeException("Evaluate postfix: operator: " + operator + "not supported"); //error should not be needed
+        };
+        return result;
+    }
+
+
+    public static float operateLoad(Spreadsheet spreadsheet, String operator, String l_operand, String r_operand) {
+        float l_op = 0, r_op = 0;
+        if(is_cell_id(l_operand)) { //THIS HAPPENS??
+            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(l_operand);
+            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate);
+            l_op = (float) cell.getContent().getValue(); //add exceptions
+            //System.out.println("no es number, " + l_operand + ": " + l_op);
+        } else {
+            l_op = Float.parseFloat(l_operand);
+            //System.out.println("l_op: " + l_op);
+        }
+
+        if(is_cell_id(r_operand)) {
+            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(r_operand);
+            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate);
+            r_op = (float) cell.getContent().getValue(); //add exceptions
+            //System.out.println("no es number, " + r_operand + ": " + r_op);
+        } else {
+            r_op = Float.parseFloat(r_operand);
+            //System.out.println("r_op: " + r_op);
+        }
+
+        float result = switch (operator) {
+            case "+" -> l_op + r_op;
+            case "-" -> l_op - r_op;
+            case "*" -> l_op * r_op;
+            case "/" -> l_op / r_op;
+            default -> throw new RuntimeException("Evaluate postfix: operator: " + operator + "not supported"); //error should not be needed
         };
         return result;
     }
@@ -291,7 +321,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                     if (value instanceof Float) {
                         aux_stack.push(Float.toString((Float) value));
                     } else if (value instanceof String) {
-                        System.out.println("Error, text as formula cell dependency!");
+                        throw new RuntimeException("Evaluate postfix: text as formula cell dependency!");
                     } else if (value == null) {
                         aux_stack.push("0");
                     }
@@ -309,25 +339,69 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         return Float.parseFloat(aux_stack.pop());
     }
 
-    public static Result<Float> compute(String formula_body, Spreadsheet spreadsheet) {
-        boolean success = true;
+
+    public static float evaluatePostfixLoad(Spreadsheet spreadsheet, LinkedList<String> postfix) { //-1 not suported!
+        Stack<String> aux_stack = new Stack<>();
+        for (int i = 0; i < postfix.size(); ++i) {
+            String next = postfix.get(i);
+            if(is_operand(next)) { //MUST BE MODIFIED
+                if(is_cell_id(next)) {
+                    NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                    Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate);
+                    Object value = cell.getContent().getValue(); //MODIFY!!
+                    if (value instanceof Float) {
+                        aux_stack.push(Float.toString((Float) value));
+                    } else if (value instanceof String) {
+                        throw new RuntimeException("Evaluate postfix: text as formula cell dependency!");
+                    } else if (value == null) {
+                        aux_stack.push("0");
+                    }
+                } else {
+                    aux_stack.push(next);
+                }
+            } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
+                String down, top;
+                top = aux_stack.pop();
+                down = aux_stack.pop();
+                aux_stack.push(Float.toString(operateLoad(spreadsheet, next, down, top))); //ojo format!!
+            }
+            //System.out.println("stack: " + i + " elem: " + next + " " + Arrays.toString(aux_stack.toArray()));
+        }
+        return Float.parseFloat(aux_stack.pop());
+    }
+
+
+    public static Float compute(String formula_body, Spreadsheet spreadsheet) {
         float value = 0;
-        Result<LinkedList<String>> result = tokenize(formula_body);
-        LinkedList<String> tokens = result.getValue();
-        if(!result.getSuccess()) {
-            System.out.println("No tokenizable formula!");
-            success = false;
-        }
-        else if (!is_parseable(tokens)) {
-            System.out.println("No parseable formula!");
-            success = false;
-        }
-        else {
+        try {
+            LinkedList<String> tokens = tokenize(formula_body);
+            if (!is_parseable(tokens)) {
+                throw new RuntimeException("No parseable tokens");
+            }
             LinkedList<String> postfix = generate_postfix(tokens);
             value = evaluate_postfix(spreadsheet, postfix);
+        } catch (Exception e) {
+            throw new RuntimeException("Compute: " + e.getMessage());
         }
         //System.out.println("Correct!");
-        return new Result<>(value, success);
+        return value;
+    }
+
+
+    public static Float computeLoad(String formula_body, Spreadsheet spreadsheet) {
+        float value = 0;
+        try {
+            LinkedList<String> tokens = tokenize(formula_body);
+            if (!is_parseable(tokens)) {
+                throw new RuntimeException("No parseable tokens");
+            }
+            LinkedList<String> postfix = generate_postfix(tokens);
+            value = evaluatePostfixLoad(spreadsheet, postfix);
+        } catch (Exception e) {
+            throw new RuntimeException("Compute: " + e.getMessage());
+        }
+        //System.out.println("Correct!");
+        return value;
     }
 
 }

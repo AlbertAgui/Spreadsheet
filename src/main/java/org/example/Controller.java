@@ -6,10 +6,14 @@ public class Controller {
     private static Spreadsheet spreadsheet;
 
     public static void editCell(String cellId, String input) { //WORKING
-        NumCoordinate numCoordinate;
-        numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
-        ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
-        spreadsheet.printSpreadsheet();
+        try {
+            NumCoordinate numCoordinate;
+            numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
+            ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
+            spreadsheet.printSpreadsheet();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void createEmptySpreadsheet() {

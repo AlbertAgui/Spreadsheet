@@ -27,16 +27,11 @@ public class Load_store { // catch (Exception e)
                         NumCoordinate numCoordinate = new NumCoordinate(nRow, nColum);
                         switch (inputType) {
                             case "Formula":
-                                String body = input.replace("=", "");
-                                Result result = Formula.compute(body, spreadsheet);
-                                if (!result.getSuccess()) {
-                                    System.out.println("Error computing formula");
-                                    return null;
-                                }
-                                float new_value = (Float) result.getValue(); //Have to be computed properlly
-                                LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(body);
-                                ControllerSpreadsheet.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
-                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, new_value); //CHANGE VALUE
+                                String formulaBody = input.replace("=", "");
+                                float newValue = Formula.computeLoad(formulaBody, spreadsheet);
+                                LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(formulaBody);
+                                ControllerSpreadsheet.updateLoadCellDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
+                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, newValue); //CHANGE VALUE
                                 break;
                             case "Text":
                                 ControllerSpreadsheet.updateText(spreadsheet, numCoordinate, input);

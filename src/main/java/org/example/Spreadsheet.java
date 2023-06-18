@@ -24,8 +24,7 @@ public class Spreadsheet {
         NumCoordinate size = cells.getSize();
 
         if (size == null) {
-            System.out.println("Spreadsheet size is null.");
-            return;
+            throw new RuntimeException("Print spreadsheet: spreadsheet size is null");
         }
 
         int cellWidth = 10; // Adjust the width as needed

@@ -115,6 +115,32 @@ public class ControllerSpreadsheet {
         }
     }
 
+    public static void updateLoadCellDependencies(Spreadsheet spreadsheet, NumCoordinate coordinate, LinkedList<String> old_dependencies, LinkedList<String> new_dependencies){
+        LinkedList<String> xor_dependencies = findDistinctElements(old_dependencies, new_dependencies);
+        LinkedList<String> add_dependencies = findEqualElements(xor_dependencies, new_dependencies);
+        LinkedList<String> erase_dependencies = findEqualElements(xor_dependencies, old_dependencies);
+
+        for (String element : add_dependencies) { //OJO
+            NumCoordinate numCoordinate;
+            numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
+            Cell cell = getCellAny(spreadsheet,numCoordinate);
+            Dependants dependants = cell.getDependants();
+            dependants.addDependant(coordinate);
+            cell.setDependants(dependants);
+            spreadsheet.cells.addCell(numCoordinate, cell);
+        }
+
+        for (String element : erase_dependencies) {
+            NumCoordinate numCoordinate;
+            numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
+            Cell cell = getCellAny(spreadsheet,numCoordinate);
+            Dependants dependants = cell.getDependants();
+            dependants.eraseDependant(coordinate);
+            cell.setDependants(dependants);
+            spreadsheet.cells.addCell(numCoordinate, cell);
+        }
+    }
+
     public static void updateFormula(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String writtenContent, float value){
         Cell cell = getCellAny(spreadsheet, numCoordinate);
         Content new_content = cell.getContent();
@@ -176,7 +202,7 @@ public class ControllerSpreadsheet {
     }
 
 
-    public static void recomputeSpreadsheet(Spreadsheet spreadsheet) throws Exception {
+    public static void recomputeSpreadsheet(Spreadsheet spreadsheet){
         Set<NumCoordinate> visited = new HashSet<>();
         for (NumCoordinate coordinate: spreadsheet.cells.getCoordinateSet()) {
             if(!visited.contains(coordinate)) {
@@ -185,14 +211,10 @@ public class ControllerSpreadsheet {
                 while(!queue.isEmpty()) {
                     NumCoordinate numCoordinate = queue.remove();
                     Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
-                    String input = ((ContentFormula)cell.getContent()).getWrittenData();
-                    String body = input.replace("=", "");
-                    Result result = Formula.compute(body, spreadsheet);
-                    if(!result.getSuccess()){ //should happen?? error controll is before
-                        System.out.println("Error recomputing cell dependents formula");
-                        return;
-                    }
-                    updateFormula(spreadsheet, numCoordinate, input, (Float) result.getValue());
+                    String writtenData = ((ContentFormula)cell.getContent()).getWrittenData();
+                    String formulaBody = writtenData.replace("=", "");
+                    Float value = Formula.compute(formulaBody, spreadsheet);
+                    updateFormula(spreadsheet, numCoordinate, writtenData, value);
                 }
             }
         }
@@ -206,12 +228,8 @@ public class ControllerSpreadsheet {
             Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
             String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData();
             String formulaBody = writtenData.replace("=", "");
-            Result result = Formula.compute(formulaBody, spreadsheet);
-            if(!result.getSuccess()){
-                System.out.println("Error recomputing cell dependents formula");
-                return;
-            }
-            updateFormula(spreadsheet, dependant, writtenData, (Float) result.getValue());
+            Float value = Formula.compute(formulaBody, spreadsheet);
+            updateFormula(spreadsheet, dependant, writtenData,value);
             recomputeCellDependants(spreadsheet, dependant);// TEMPORAL, LOW PERFORMANCE APPROACH
         }
     }
@@ -258,50 +276,35 @@ public class ControllerSpreadsheet {
     public static void editCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String input) { //WORKING
         try {
             String inputType = getContentType(input);
-            String body = input.replace("=", "");
+            String formulaBody = input.replace("=", "");
             Cell old_cell = null;
             LinkedList<String> old_dependencies = null;
             LinkedList<String> new_dependencies = null;
-            float new_value = 0;
+            float newValue = 0;
             switch (inputType) {
                 case "Formula":
                     old_cell = getCellNull(spreadsheet, numCoordinate);
                     if (old_cell != null) {
                         Content old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
-                            Result result = Formula.compute(body, spreadsheet);
-                            if (!result.getSuccess()) {
-                                System.out.println("Error computing formula");
-                                return;
-                            }
-                            new_value = (Float) result.getValue();
+                            newValue = Formula.compute(formulaBody, spreadsheet);
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.replace("=", "");
                             old_dependencies = tokenize(old_body);
-                            new_dependencies = tokenize(body);
+                            new_dependencies = tokenize(formulaBody);
                         } else {
-                            Result result = Formula.compute(body, spreadsheet);
-                            if (!result.getSuccess()) {
-                                System.out.println("Error computing formula");
-                                return;
-                            }
-                            new_value = (Float) result.getValue();
+                            newValue = Formula.compute(formulaBody, spreadsheet);
                             old_dependencies = new LinkedList<>();
-                            new_dependencies = tokenize(body);
+                            new_dependencies = tokenize(formulaBody);
                         }
                     } else {
-                        Result result = Formula.compute(body, spreadsheet);
-                        if (!result.getSuccess()) {
-                            System.out.println("Error computing formula");
-                            return;
-                        }
-                        new_value = (Float) result.getValue();
+                        newValue = Formula.compute(formulaBody, spreadsheet);
                         old_dependencies = new LinkedList<>();
-                        new_dependencies = tokenize(body);
+                        new_dependencies = tokenize(formulaBody);
                     }
 
                     updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
-                    updateFormula(spreadsheet, numCoordinate, input, new_value);
+                    updateFormula(spreadsheet, numCoordinate, input, newValue);
                     if (hasCellCircularDependency(spreadsheet, numCoordinate)) {
                         System.out.println("has Circular dependency " + inputType);
                         updateDependencies(spreadsheet, numCoordinate, new_dependencies, old_dependencies); //redo dependencies
@@ -331,7 +334,7 @@ public class ControllerSpreadsheet {
                         }
                     }
                     //update written, value
-                    updateText(spreadsheet, numCoordinate, body);
+                    updateText(spreadsheet, numCoordinate, formulaBody);
                     //recompute values
                     recomputeCellDependants(spreadsheet, numCoordinate);
                     break;
@@ -348,8 +351,8 @@ public class ControllerSpreadsheet {
                         }
                     }
                     //update written, value
-                    new_value = Float.parseFloat(body);
-                    updateNumerical(spreadsheet, numCoordinate, new_value);
+                    newValue = Float.parseFloat(formulaBody);
+                    updateNumerical(spreadsheet, numCoordinate, newValue);
                     //recompute values
                     recomputeCellDependants(spreadsheet, numCoordinate);
                     break;
@@ -357,7 +360,7 @@ public class ControllerSpreadsheet {
                     System.out.println("No concrete content factory method for " + inputType);
             }
         } catch (Exception e) {
-            System.out.println("Error Edit Cell: " + e.getMessage());
+            throw new RuntimeException("Error Edit Cell: " + e.getMessage());
         }
     }
 
@@ -367,7 +370,7 @@ public class ControllerSpreadsheet {
     public static Cell getCellExisting (Spreadsheet spreadsheet, NumCoordinate numCoordinate) {
         Cell cell = spreadsheet.cells.getCell(numCoordinate);
         if (cell == null)
-            throw new RuntimeException("Get existing cell: colum: " + numCoordinate.getNumColum() + ", row: " + numCoordinate.getNumRow() + " not found");
+            throw new RuntimeException("Cell not found: colum: " + numCoordinate.getNumColum() + ", row: " + numCoordinate.getNumRow());
         return cell;
     }
 
