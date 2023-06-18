@@ -27,22 +27,18 @@ public class Load_store { // catch (Exception e)
                         NumCoordinate numCoordinate = new NumCoordinate(nRow, nColum);
                         switch (inputType) {
                             case "Formula":
-                                String body = input.replace("=", "");
-                                Result result = Formula.compute(body, spreadsheet);
-                                if (!result.getSuccess()) {
-                                    System.out.println("Error computing formula");
-                                    return null;
-                                }
-                                float new_value = (Float) result.getValue(); //Have to be computed properlly
-                                LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(body);
+                                String formulaBody = input.substring(1);
+                                float newValue = Formula.compute(formulaBody, spreadsheet);
+                                LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(formulaBody);
                                 ControllerSpreadsheet.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
-                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, new_value); //CHANGE VALUE
+                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, newValue); //CHANGE VALUE
                                 break;
                             case "Text":
                                 ControllerSpreadsheet.updateText(spreadsheet, numCoordinate, input);
                                 break;
                             case "Numerical":
-                                float t_value = Float.parseFloat(input);
+                                String inputTrim = input.trim(); //ERASE SPACES
+                                float t_value = Float.parseFloat(inputTrim);
                                 ControllerSpreadsheet.updateNumerical(spreadsheet, numCoordinate, t_value);
                                 break;
                             default:

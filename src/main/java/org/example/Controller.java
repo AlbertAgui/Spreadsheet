@@ -6,10 +6,14 @@ public class Controller {
     private static Spreadsheet spreadsheet;
 
     public static void editCell(String cellId, String input) { //WORKING
-        NumCoordinate numCoordinate;
-        numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
-        ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
-        spreadsheet.printSpreadsheet();
+        try {
+            NumCoordinate numCoordinate;
+            numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
+            ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
+            spreadsheet.cells.printCells();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void createEmptySpreadsheet() {
@@ -19,7 +23,7 @@ public class Controller {
     public static void loadSpreadsheet(String path) {
         try {
             spreadsheet = Load_store.loadspreadsheet(path);
-            spreadsheet.printSpreadsheet();
+            spreadsheet.cells.printCells();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -28,7 +32,7 @@ public class Controller {
     public static void storeSpreadsheet(String path) {
         try {
             Load_store.storespreadsheet(path, spreadsheet);
-            spreadsheet.printSpreadsheet();
+            spreadsheet.cells.printCells();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
