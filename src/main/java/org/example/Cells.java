@@ -92,7 +92,7 @@ public class Cells {
             throw new RuntimeException("Print spreadsheet: spreadsheet size is null");
         }
 
-        int MaxCellWidth = 10; // Adjust the width as needed
+        int cellWidth = 15; // Adjust the width as needed
 
         for (int i = 1; i <= size.getNumRow(); i++) {
             for (int j = 1; j <= size.getNumColum(); j++) {
@@ -111,16 +111,12 @@ public class Cells {
                     } else {
                         cellValue = "";
                     }
-                    int padding = 0;
+                    int padding = 1;
                     String formattedCell = "";
-                    if(MaxCellWidth > cellValue.length()) {
-                        padding = MaxCellWidth - cellValue.length();
-                        int leftPadding = padding / 2;
-                        int rightPadding = padding - leftPadding;
-                        formattedCell = String.format("[%-" + leftPadding + "s%s%-" + rightPadding + "s] ", "", cellValue, "");
-                    } else {
-                        formattedCell = String.format("[" + cellValue + "] ");
-                    }
+                    padding = cellWidth - cellValue.length();
+                    int leftPadding = padding / 2;
+                    int rightPadding = padding - leftPadding;
+                    formattedCell = String.format("[%-" + Math.max(1,leftPadding) + "s%s%-" + Math.max(1,rightPadding) + "s] ", "", cellValue, "");
 
                     System.out.print(formattedCell);
                 } else {
