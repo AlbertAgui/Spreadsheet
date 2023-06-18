@@ -140,16 +140,34 @@ public class ControllerSpreadsheet {
         spreadsheet.cells.addCell(coordinate, new_cell);
     }
 
-    public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate coordinate, float value){
-        Cell new_cell = spreadsheet.cells.getCell(coordinate);
-        Content new_content = new_cell.getContent();
-        if (!(new_content instanceof ContentNumerical)) {
-            new_content = new ContentNumerical();
+    public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate coordinate, float value) {
+        Cell newCell = spreadsheet.cells.getCell(coordinate);
+
+        if (newCell == null) {
+            newCell = new Cell();
         }
-        ((ContentNumerical) new_content).setValue(value);
-        new_cell.setContent(new_content);
-        spreadsheet.cells.addCell(coordinate, new_cell);
+
+        Content newContent = newCell.getContent();
+
+        if (!(newContent instanceof ContentNumerical)) {
+            newContent = new ContentNumerical();
+            newCell.setContent(newContent);
+        }
+
+        ((ContentNumerical) newContent).setValue(value);
+        spreadsheet.cells.addCell(coordinate, newCell);
     }
+
+//    public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate coordinate, float value){
+//        Cell new_cell = spreadsheet.cells.getCell(coordinate);
+//        Content new_content = new_cell.getContent();
+//        if (!(new_content instanceof ContentNumerical)) {
+//            new_content = new ContentNumerical();
+//        }
+//        ((ContentNumerical) new_content).setValue(value);
+//        new_cell.setContent(new_content);
+//        spreadsheet.cells.addCell(coordinate, new_cell);
+//    }
 
 
     private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) throws Exception {

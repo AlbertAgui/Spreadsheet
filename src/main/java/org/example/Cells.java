@@ -38,14 +38,28 @@ public class Cells {
 
     public Cell getCell(NumCoordinate n_coordinate) {
         int row = n_coordinate.getNumRow();
-        int colum = n_coordinate.getNumColum();
-        if(matrix.containsKey(row)) {
+        int column = n_coordinate.getNumColum();
+        if (matrix.containsKey(row)) {
             Map<Integer, Cell> columns = matrix.get(row);
-            if(columns.containsKey(colum))
-                return columns.get(colum);
+            if (columns.containsKey(column)) {
+                return columns.get(column);
+            }
         }
-        return new Cell(); //OJO aixi funciona en tots els casos?? Mirar prerequisists
+        // Create and return an empty Cell object for non-existent cells
+        return new Cell();
     }
+
+
+//    public Cell getCell(NumCoordinate n_coordinate) {
+//        int row = n_coordinate.getNumRow();
+//        int colum = n_coordinate.getNumColum();
+//        if(matrix.containsKey(row)) {
+//            Map<Integer, Cell> columns = matrix.get(row);
+//            if(columns.containsKey(colum))
+//                return columns.get(colum);
+//        }
+//        return new Cell(); //OJO aixi funciona en tots els casos?? Mirar prerequisists
+//    }
 
     public NumCoordinate getSize() {
         Integer maxRow = 0;

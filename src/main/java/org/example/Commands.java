@@ -34,7 +34,7 @@ public class Commands {
             Controller.editCell(cellCoordinate, content);
             return new String[]{flag, cellCoordinate, content};
         } else {
-            System.out.println("error");
+            System.out.println("Error Editing cell please check the command and try again");
             return null;
         }
     }
@@ -69,7 +69,7 @@ public class Commands {
             }
             return new String[]{flag, filePath};
         } else {
-            System.out.println("error");
+            System.out.println("Error Incorrect path format");
             return null;
         }
     }
@@ -91,7 +91,7 @@ public class Commands {
             Controller.loadSpreadsheet(path);
             return new String[]{flag, matcher.group(0)};
         } else {
-            System.out.println("error");
+            System.out.println("Loading Failed, File not found or incorrect format");
             return null;
         }
     }
@@ -107,7 +107,7 @@ public class Commands {
             Controller.storeSpreadsheet(path);
             return new String[]{flag, matcher.group(0)};
         } else {
-            System.out.println("error");
+            System.out.println("Saving Failed, Please check the path");
             return null;
         }
     }
@@ -132,6 +132,8 @@ public class Commands {
                 System.out.println(Arrays.toString(S(uc)));
             } else if (uc.equals("quit")) {
                 break;
+            } else {
+                System.out.println("Wrong Command\n Please Enter correctly");
             }
         }
     }
