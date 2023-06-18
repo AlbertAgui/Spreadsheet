@@ -194,8 +194,8 @@ public class ControllerSpreadsheet {
                 recomputeCell(spreadsheet, coordinate, queue, visited);
                 while(!queue.isEmpty()) {
                     NumCoordinate numCoordinate = queue.remove();
-                    Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
-                    String writtenData = ((ContentFormula)cell.getContent()).getWrittenData();
+                    Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet, numCoordinate);
+                    String writtenData = ((ContentFormula)cell.getContent()).getWrittenData(); //SHOULD BE FORMULA
                     String formulaBody = writtenData.substring(1);
                     Float value = Formula.compute(formulaBody, spreadsheet);
                     updateFormula(spreadsheet, numCoordinate, writtenData, value);
@@ -209,11 +209,11 @@ public class ControllerSpreadsheet {
         Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for(NumCoordinate dependant : dependants){
-            Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
-            String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData();
+            Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,dependant);
+            String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData(); //SHOULD BE FORMULA
             String formulaBody = writtenData.substring(1);
             Float value = Formula.compute(formulaBody, spreadsheet);
-            updateFormula(spreadsheet, dependant, writtenData,value);
+            updateFormula(spreadsheet, dependant, writtenData, value);
             recomputeCellDependants(spreadsheet, dependant);// TEMPORAL, LOW PERFORMANCE APPROACH
         }
     }
