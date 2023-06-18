@@ -30,7 +30,7 @@ public class Cells {
         int row = numCoordinate.getNumRow();
         int colum = numCoordinate.getNumColum();
         //System.out.println("Cells: colum: " + colum + " row: " + row + " value: " + cell.getValue() + "\n");
-        if(!matrix.containsKey(row)) {
+        if (!matrix.containsKey(row)) {
             matrix.put(row, new HashMap<>());
         }
         matrix.get(row).put(colum, cell);
