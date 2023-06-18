@@ -36,6 +36,21 @@ public class Cells {
         matrix.get(row).put(colum, cell);
     }
 
+    public void eraseCell(NumCoordinate numCoordinate) {
+        int row = numCoordinate.getNumRow();
+        int colum = numCoordinate.getNumColum();
+        if(matrix.containsKey(row)) {
+            Map<Integer, Cell> columns = matrix.get(row);
+            if(columns.containsKey(colum)) {
+                matrix.get(row).remove(colum);
+            } else {
+                System.out.println("Cell not found");
+            }
+        } else {
+            System.out.println("Cell not found");
+        }
+    }
+
     public Cell getCell(NumCoordinate numCoordinate)  {
         int row = numCoordinate.getNumRow();
         int colum = numCoordinate.getNumColum();
