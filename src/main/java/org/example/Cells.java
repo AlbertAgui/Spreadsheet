@@ -30,10 +30,25 @@ public class Cells {
         int row = numCoordinate.getNumRow();
         int colum = numCoordinate.getNumColum();
         //System.out.println("Cells: colum: " + colum + " row: " + row + " value: " + cell.getValue() + "\n");
-        if(!matrix.containsKey(row)) {
+        if (!matrix.containsKey(row)) {
             matrix.put(row, new HashMap<>());
         }
         matrix.get(row).put(colum, cell);
+    }
+
+    public void eraseCell(NumCoordinate numCoordinate) {
+        int row = numCoordinate.getNumRow();
+        int colum = numCoordinate.getNumColum();
+        if(matrix.containsKey(row)) {
+            Map<Integer, Cell> columns = matrix.get(row);
+            if(columns.containsKey(colum)) {
+                matrix.get(row).remove(colum);
+            } else {
+                System.out.println("Cell not found");
+            }
+        } else {
+            System.out.println("Cell not found");
+        }
     }
 
     public Cell getCell(NumCoordinate numCoordinate)  {
