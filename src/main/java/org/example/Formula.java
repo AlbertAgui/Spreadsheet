@@ -249,9 +249,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     //Evaluate postfix
     public static float operate(Spreadsheet spreadsheet, String operator, String l_operand, String r_operand) {
         float l_op = 0, r_op = 0;
-        if(is_cell_id(l_operand)) {
-            NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(l_operand);
-            l_op = (float) spreadsheet.cells.getCell(coor).getContent().getValue(); //add exceptions
+        if(is_cell_id(l_operand)) { //THIS HAPPENS??
+            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(l_operand);
+            Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
+            l_op = (float) cell.getContent().getValue(); //add exceptions
             //System.out.println("no es number, " + l_operand + ": " + l_op);
         } else {
             l_op = Float.parseFloat(l_operand);
@@ -259,8 +260,9 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         }
 
         if(is_cell_id(r_operand)) {
-            NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(r_operand);
-            r_op = (float) spreadsheet.cells.getCell(coor).getContent().getValue(); //add exceptions
+            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(r_operand);
+            Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
+            r_op = (float) cell.getContent().getValue(); //add exceptions
             //System.out.println("no es number, " + r_operand + ": " + r_op);
         } else {
             r_op = Float.parseFloat(r_operand);
@@ -283,8 +285,9 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             String next = postfix.get(i);
             if(is_operand(next)) { //MUST BE MODIFIED
                 if(is_cell_id(next)) {
-                    NumCoordinate coor = Translate_coordinate.translate_coordinate_to_int(next);
-                    Object value = spreadsheet.cells.getCell(coor).getContent().getValue(); //MODIFY!!
+                    NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                    Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
+                    Object value = cell.getContent().getValue(); //MODIFY!!
                     if (value instanceof Float) {
                         aux_stack.push(Float.toString((Float) value));
                     } else if (value instanceof String) {

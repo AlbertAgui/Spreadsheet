@@ -26,9 +26,9 @@ public class Cells {
 
     //eraseCell PENDING
 
-    public void addCell(NumCoordinate n_coordinate, Cell cell) {
-        int row = n_coordinate.getNumRow();
-        int colum = n_coordinate.getNumColum();
+    public void addCell(NumCoordinate numCoordinate, Cell cell) {
+        int row = numCoordinate.getNumRow();
+        int colum = numCoordinate.getNumColum();
         //System.out.println("Cells: colum: " + colum + " row: " + row + " value: " + cell.getValue() + "\n");
         if(!matrix.containsKey(row)) {
             matrix.put(row, new HashMap<>());
@@ -36,15 +36,15 @@ public class Cells {
         matrix.get(row).put(colum, cell);
     }
 
-    public Cell getCell(NumCoordinate n_coordinate) {
-        int row = n_coordinate.getNumRow();
-        int colum = n_coordinate.getNumColum();
+    public Cell getCell(NumCoordinate numCoordinate)  {
+        int row = numCoordinate.getNumRow();
+        int colum = numCoordinate.getNumColum();
         if(matrix.containsKey(row)) {
             Map<Integer, Cell> columns = matrix.get(row);
             if(columns.containsKey(colum))
                 return columns.get(colum);
         }
-        return new Cell(); //OJO aixi funciona en tots els casos?? Mirar prerequisists
+        return null;
     }
 
     public NumCoordinate getSize() {
@@ -52,7 +52,6 @@ public class Cells {
         Integer maxCol = 0;
         for (Integer rowKey : matrix.keySet()) {
             for (Integer columnKey : matrix.get(rowKey).keySet()) {
-                // Perform operations using rowKey and columnKey
                 if (rowKey > maxRow) maxRow = rowKey;
                 if (columnKey > maxCol) maxCol = columnKey;
                 //System.out.println("Row key: " + rowKey + ", Column key: " + columnKey);
@@ -65,7 +64,6 @@ public class Cells {
         Set<NumCoordinate> coordinates = new HashSet<>();
         for (Integer rowKey : matrix.keySet()) {
             for (Integer columnKey : matrix.get(rowKey).keySet()) {
-                // Perform operations using rowKey and columnKey
                 NumCoordinate coordinate = new NumCoordinate(rowKey, columnKey);
                 coordinates.add(coordinate);
                 //System.out.println("Row key: " + rowKey + ", Column key: " + columnKey);
@@ -74,12 +72,12 @@ public class Cells {
         return coordinates;
     }
 
-    public void displayCells() {
+    /*public void displayCells() {
         for (Integer rowKey : matrix.keySet()) {
             for (Integer columnKey : matrix.get(rowKey).keySet()) {
                 Object object = matrix.get(rowKey).get(columnKey).getContent().getValue();
                 System.out.println("Row: " + rowKey + ", Colum: "+ columnKey + " value: " + object);
             }
         }
-    }
+    }*/
 }
