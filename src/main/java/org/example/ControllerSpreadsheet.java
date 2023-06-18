@@ -261,6 +261,7 @@ public class ControllerSpreadsheet {
             String inputType = getContentType(input);
             String formulaBody = input.substring(1);
             Cell old_cell = null;
+            Content old_content = null;
             LinkedList<String> old_dependencies = null;
             LinkedList<String> new_dependencies = null;
             float newValue = 0;
@@ -270,7 +271,7 @@ public class ControllerSpreadsheet {
                     newValue = Formula.compute(formulaBody, spreadsheet);
                     new_dependencies = tokenize(formulaBody);
                     if (old_cell != null) {
-                        Content old_content = old_cell.getContent();
+                        old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.substring(1);
@@ -287,10 +288,12 @@ public class ControllerSpreadsheet {
                         updateDependencies(spreadsheet, numCoordinate, new_dependencies, old_dependencies); //redo dependencies
 
                         //UNDO UPDATE FORMULA
-                        if (old_cell == null) {
+                        if (old_content == null) { //NOT BEST SOLUTION, ALL CELL SHOULD BE COPIED RECURSIVELLY, NOT ROBUST
                             spreadsheet.cells.eraseCell(numCoordinate);
                         } else {
-                            spreadsheet.cells.addCell(numCoordinate, old_cell);
+                            Cell recoverCell = spreadsheet.cells.getCell(numCoordinate);
+                            recoverCell.setContent(old_content);
+                            spreadsheet.cells.addCell(numCoordinate, recoverCell);
                         }
                         throw new RuntimeException("Circular dependency");
                     } else {
@@ -302,7 +305,7 @@ public class ControllerSpreadsheet {
                 case "Text":
                     old_cell = getCellNull(spreadsheet, numCoordinate);
                     if (old_cell != null) {
-                        Content old_content = old_cell.getContent();
+                        old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.substring(1);
@@ -319,7 +322,7 @@ public class ControllerSpreadsheet {
                 case "Numerical":
                     old_cell = getCellNull(spreadsheet, numCoordinate);
                     if (old_cell != null) {
-                        Content old_content = old_cell.getContent();
+                        old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.substring(1);
