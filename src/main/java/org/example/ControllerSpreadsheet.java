@@ -44,8 +44,8 @@ public class ControllerSpreadsheet {
 
 
     private static String textPattern = "^(?!=).*$";
-    private static String formulaPattern = "^=.*";
-    private static String numPattern = "^\\d+$";
+    private static String formulaPattern = "^=.*$";
+    private static String numPattern = "^[-+]?\\d*\\.?\\d+$";
 
     public static String getContentType(String formula_body) {
         Pattern textRegex = Pattern.compile(textPattern);
