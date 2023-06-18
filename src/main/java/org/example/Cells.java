@@ -24,8 +24,6 @@ public class Cells {
         return false;
     }
 
-    //eraseCell PENDING
-
     public void addCell(NumCoordinate numCoordinate, Cell cell) {
         int row = numCoordinate.getNumRow();
         int colum = numCoordinate.getNumColum();
@@ -36,7 +34,7 @@ public class Cells {
         matrix.get(row).put(colum, cell);
     }
 
-    public void eraseCell(NumCoordinate numCoordinate) {
+    public void eraseCell(NumCoordinate numCoordinate) { //ROWS ARE NOT ERASED
         int row = numCoordinate.getNumRow();
         int colum = numCoordinate.getNumColum();
         if(matrix.containsKey(row)) {
@@ -87,12 +85,49 @@ public class Cells {
         return coordinates;
     }
 
-    /*public void displayCells() {
-        for (Integer rowKey : matrix.keySet()) {
-            for (Integer columnKey : matrix.get(rowKey).keySet()) {
-                Object object = matrix.get(rowKey).get(columnKey).getContent().getValue();
-                System.out.println("Row: " + rowKey + ", Colum: "+ columnKey + " value: " + object);
-            }
+    public void printCells() {
+        NumCoordinate size = getSize();
+
+        if (size == null) {
+            throw new RuntimeException("Print spreadsheet: spreadsheet size is null");
         }
-    }*/
+
+        int MaxCellWidth = 10; // Adjust the width as needed
+
+        for (int i = 1; i <= size.getNumRow(); i++) {
+            for (int j = 1; j <= size.getNumColum(); j++) {
+                NumCoordinate coordinate = new NumCoordinate(i, j);
+                Cell cell = getCell(coordinate);
+
+                if (cell != null) {
+                    Content content = cell.getContent();
+                    String cellValue;
+                    if (content instanceof ContentFormula) {
+                        cellValue = ((ContentFormula) content).getValue() + " " + ((ContentFormula) content).getWrittenData();
+                    } else if (content instanceof ContentText) {
+                        cellValue = ((ContentText) content).getValue();
+                    } else if (content instanceof ContentNumerical) {
+                        cellValue = String.valueOf(((ContentNumerical) content).getValue());
+                    } else {
+                        cellValue = "";
+                    }
+                    int padding = 0;
+                    String formattedCell = "";
+                    if(MaxCellWidth > cellValue.length()) {
+                        padding = MaxCellWidth - cellValue.length();
+                        int leftPadding = padding / 2;
+                        int rightPadding = padding - leftPadding;
+                        formattedCell = String.format("[%-" + leftPadding + "s%s%-" + rightPadding + "s] ", "", cellValue, "");
+                    } else {
+                        formattedCell = String.format("[" + cellValue + "] ");
+                    }
+
+                    System.out.print(formattedCell);
+                } else {
+                    System.out.print("[ ] ");
+                }
+            }
+            System.out.println();
+        }
+    }
 }

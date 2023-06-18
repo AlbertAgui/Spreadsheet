@@ -19,6 +19,7 @@ public class ControllerSpreadsheet {
 
     public static LinkedList<String> tokenize(String formula_body) {
         LinkedList<String> tokens = new LinkedList<>();
+        String expectedToken = TokenMatchInfos.get(6);
         while(!formula_body.isEmpty()) {
             Boolean found = false;
             for(String tokeninfo : TokenMatchInfos) {
@@ -29,7 +30,7 @@ public class ControllerSpreadsheet {
                     found = true;
                     String token = m.group(0);
                     //System.out.println("tokencomp: \"" + token + "\"");
-                    if (token.equals(TokenMatchInfos.get(6))) { //cell id
+                    if (token.matches(expectedToken)) { //cell id
                         tokens.add(token);
                     }
                     formula_body = m.replaceFirst("");
@@ -112,8 +113,15 @@ public class ControllerSpreadsheet {
             Cell cell = getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.eraseDependant(coordinate);
-            cell.setDependants(dependants);
-            spreadsheet.cells.addCell(numCoordinate, cell);
+            if(dependants.getDependants().size() == 0) {//ERASE CELL IF NEEDED
+                Content content = cell.getContent();
+                if (!(content instanceof ContentFormula || content instanceof ContentText || content instanceof ContentNumerical)) {
+                    spreadsheet.cells.eraseCell(numCoordinate);
+                }
+            } else {
+                cell.setDependants(dependants);
+                spreadsheet.cells.addCell(numCoordinate, cell);
+            }
         }
     }
 
@@ -260,25 +268,20 @@ public class ControllerSpreadsheet {
             switch (inputType) {
                 case "Formula":
                     old_cell = getCellNull(spreadsheet, numCoordinate);
+                    newValue = Formula.compute(formulaBody, spreadsheet);
+                    new_dependencies = tokenize(formulaBody);
                     if (old_cell != null) {
                         Content old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
-                            newValue = Formula.compute(formulaBody, spreadsheet);
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.substring(1);
                             old_dependencies = tokenize(old_body);
-                            new_dependencies = tokenize(formulaBody);
                         } else {
-                            newValue = Formula.compute(formulaBody, spreadsheet);
                             old_dependencies = new LinkedList<>();
-                            new_dependencies = tokenize(formulaBody);
                         }
                     } else {
-                        newValue = Formula.compute(formulaBody, spreadsheet);
                         old_dependencies = new LinkedList<>();
-                        new_dependencies = tokenize(formulaBody);
                     }
-
                     updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
                     updateFormula(spreadsheet, numCoordinate, input, newValue);
                     if (hasCellCircularDependency(spreadsheet, numCoordinate)) {
