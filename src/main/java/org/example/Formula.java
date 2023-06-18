@@ -19,11 +19,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             "[*/]",
             "\\(",
             "\\)",
-            "[0-9]+",//093 will be supported... is it fine?
+            "[-+]?\\d*\\.?\\d+",//093 will be supported... is it fine?
             "([A-Z]+)(\\d+)",
             "([A-Z]+)\\([^\\s]*\\)" //function
     ));
-
 
     public static LinkedList<String> tokenize(String formula_body) {
         LinkedList<String> tokens = new LinkedList<>();
@@ -65,7 +64,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static Boolean is_number(String token){
-        return token.matches("[0-9]+");
+        return token.matches("[-+]?\\d*\\.?\\d+");
     }
 
     public static Boolean is_function(String token) {

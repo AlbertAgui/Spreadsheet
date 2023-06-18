@@ -12,10 +12,9 @@ public class ControllerSpreadsheet {
             "[*/]",
             "\\(",
             "\\)",
-            "[0-9]+",//093 will be supported... is it fine?
+            "[-+]?\\d*\\.?\\d+",//093 will be supported... is it fine?
             "([A-Z]+)(\\d+)"
     ));
-
 
     public static LinkedList<String> tokenize(String formula_body) {
         LinkedList<String> tokens = new LinkedList<>();
