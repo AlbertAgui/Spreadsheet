@@ -3,7 +3,6 @@ package org.example;
 import java.util.Set;
 
 public class Cell {
-
     private Content content;
 
     private Dependants dependants;
@@ -19,7 +18,6 @@ public class Cell {
         content = new Content();
     }
 
-
     public void setContent(Content content) {
         this.content = content;
     }
@@ -28,15 +26,9 @@ public class Cell {
         return content;
     }
 
-    public void addDependant(NumCoordinate dependant) {
-        this.dependants.addDependant(dependant);
-    }
+    public void setDependants(Dependants dependants) {this.dependants = dependants;}
 
-    public void eraseDependant(NumCoordinate dependant) {
-        this.dependants.eraseDependant(dependant);
-    }
-
-    public Set<NumCoordinate> getDependants() {
-        return this.dependants.getDependants();
+    public Dependants getDependants() {
+        return this.dependants;
     }
 }

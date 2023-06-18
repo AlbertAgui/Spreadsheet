@@ -4,27 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Translate_coordinate {
-    public static Boolean is_correct_coordinate(String s_coordinate) {
-        //System.out.println("Translate input: " + s_coordinate + "\n");
-        String pattern = "^([A-Z]+)(\\d+)$";
-
-        Pattern regexPattern = Pattern.compile(pattern);
-        Matcher matcher = regexPattern.matcher(s_coordinate);
-
-        if (matcher.matches()) {
-            String characters = matcher.group(1);
-            String numbers = matcher.group(2);
-
-            //System.out.println("Characters: " + characters + "\n");
-            //System.out.println("Numbers: " + numbers + "\n");
-            return true;
-        }
-        else {
-            System.out.println("Incorrect format\n");
-            return false;
-        }
-    }
-
     public static NumCoordinate translate_coordinate_to_int(String s_coordinate) {
         String pattern = "^([A-Z]+)(\\d+)$";
 
@@ -32,11 +11,9 @@ public class Translate_coordinate {
         Matcher matcher = regexPattern.matcher(s_coordinate);
 
         if (matcher.matches()) {
-            NumCoordinate numCoordinate = new NumCoordinate();
             String sn_column = matcher.group(1); //characters
             String sn_row = matcher.group(2);    //numbers
-            int n_column;
-            int n_row;
+            int n_column, n_row;
 
             //System.out.println("Characters: " + sn_column + "\n");
             //System.out.println("sn_row: " + sn_row + "\n");
@@ -44,22 +21,19 @@ public class Translate_coordinate {
             n_column = 0;
             int alphabet_size = 26;
             int multiplier = 1;
-            for(int i = sn_column.length() - 1; i >= 0; --i) {
+
+            for (int i = sn_column.length() - 1; i >= 0; --i) {
                 n_column = n_column + (((int) sn_column.charAt(i) - (int) 'A' + 1) * (multiplier));
-                //System.out.println("n_column: " + n_column + "\n");
-                //System.out.println("char_value: " + ((int) sn_column.charAt(i) - (int) 'A') + "\n");
-                //System.out.println("multiplier: " + multiplier + "\n");
                 multiplier = multiplier * alphabet_size;
             }
 
             n_row = Integer.parseInt(sn_row);
-            numCoordinate.setNumColum(n_column);
-            numCoordinate.setNumRow(n_row);
 
+            NumCoordinate numCoordinate = new NumCoordinate(n_row, n_column);
             return numCoordinate;
         }
         else {
-            System.out.println("Incorrect format\n");
+            System.out.println("Incorrect cell format" + "s_coordinate");
             return null;
         }
     }
