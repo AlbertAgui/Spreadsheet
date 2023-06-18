@@ -27,7 +27,7 @@ public class Load_store { // catch (Exception e)
                         NumCoordinate numCoordinate = new NumCoordinate(nRow, nColum);
                         switch (inputType) {
                             case "Formula":
-                                String formulaBody = input.replace("=", "");
+                                String formulaBody = input.substring(1);
                                 float newValue = Formula.compute(formulaBody, spreadsheet);
                                 LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(formulaBody);
                                 ControllerSpreadsheet.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);

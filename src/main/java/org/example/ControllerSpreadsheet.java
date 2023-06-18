@@ -158,7 +158,7 @@ public class ControllerSpreadsheet {
         Content content = cell.getContent();
         if(content instanceof ContentFormula) {
             String input = ((ContentFormula) content).getWrittenData();
-            String body = input.replace("=", "");
+            String body = input.substring(1);
             LinkedList <String> dependencies = tokenize(body);
             if(dependencies.isEmpty()) {
                 stack.add(numCoordinate);
@@ -188,7 +188,7 @@ public class ControllerSpreadsheet {
                     NumCoordinate numCoordinate = queue.remove();
                     Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
                     String writtenData = ((ContentFormula)cell.getContent()).getWrittenData();
-                    String formulaBody = writtenData.replace("=", "");
+                    String formulaBody = writtenData.substring(1);
                     Float value = Formula.compute(formulaBody, spreadsheet);
                     updateFormula(spreadsheet, numCoordinate, writtenData, value);
                 }
@@ -203,7 +203,7 @@ public class ControllerSpreadsheet {
         for(NumCoordinate dependant : dependants){
             Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
             String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData();
-            String formulaBody = writtenData.replace("=", "");
+            String formulaBody = writtenData.substring(1);
             Float value = Formula.compute(formulaBody, spreadsheet);
             updateFormula(spreadsheet, dependant, writtenData,value);
             recomputeCellDependants(spreadsheet, dependant);// TEMPORAL, LOW PERFORMANCE APPROACH
@@ -252,7 +252,7 @@ public class ControllerSpreadsheet {
     public static void editCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String input) { //WORKING
         try {
             String inputType = getContentType(input);
-            String formulaBody = input.replace("=", "");
+            String formulaBody = input.substring(1);
             Cell old_cell = null;
             LinkedList<String> old_dependencies = null;
             LinkedList<String> new_dependencies = null;
@@ -265,7 +265,7 @@ public class ControllerSpreadsheet {
                         if (old_content instanceof ContentFormula) {
                             newValue = Formula.compute(formulaBody, spreadsheet);
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                            String old_body = old_writtencontent.replace("=", "");
+                            String old_body = old_writtencontent.substring(1);
                             old_dependencies = tokenize(old_body);
                             new_dependencies = tokenize(formulaBody);
                         } else {
@@ -303,7 +303,7 @@ public class ControllerSpreadsheet {
                         Content old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                            String old_body = old_writtencontent.replace("=", "");
+                            String old_body = old_writtencontent.substring(1);
                             old_dependencies = tokenize(old_body);
                             new_dependencies = new LinkedList<>();
                             updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
@@ -320,7 +320,7 @@ public class ControllerSpreadsheet {
                         Content old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                            String old_body = old_writtencontent.replace("=", "");
+                            String old_body = old_writtencontent.substring(1);
                             old_dependencies = tokenize(old_body);
                             new_dependencies = new LinkedList<>();
                             updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);

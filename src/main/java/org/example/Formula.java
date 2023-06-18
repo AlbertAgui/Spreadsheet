@@ -108,9 +108,13 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
     public static Boolean is_num_balanced(LinkedList<String> tokens){ //Need to be improved, not just extended!!(use precedence order!)
         Stack<String> aux_stack = new Stack<>();
+        Integer countOperand = 0;
         for(int i = 0; i < tokens.size(); ++i){
             String next = tokens.get(i);
             if(is_numerical(next)) { //belongs to a set of tokens not treaten here
+                if(is_operand(next))
+                    ++countOperand;
+
                 if (aux_stack.isEmpty()) {
                     if (is_operator(next)) { //invalid case, operator without first operand
                         return false;
@@ -136,13 +140,16 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 }
             }
         }
+        if(countOperand == 0)
+            return false;
+
         if(aux_stack.isEmpty()){ //only happen if all is empty!
             return true;
-        } else if(is_operator(aux_stack.peek())) { //incomplet operator-operand-operator
+        } else if(is_operator(aux_stack.peek())) { //INCOMPLETE operator-operand-operator
             return false;
-        } else { //normal case, operand at top, only 1
-            return true;
         }
+
+        return true;
     }
 
     //Balanced claw rule
