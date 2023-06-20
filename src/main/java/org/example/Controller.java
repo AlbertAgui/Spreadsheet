@@ -8,6 +8,7 @@ import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ISpreadsheetControllerForChecker;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
+import org.example.Content;
 
 
 public class Controller implements ISpreadsheetControllerForChecker {
@@ -53,26 +54,38 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     @Override
     public double getCellContentAsDouble(String coord) throws BadCoordinateException, NoNumberException {
-        return 0;
+        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
+        ContentNumerical value;
+        value = (ContentNumerical)spreadsheet.cells.getCell(numCoordinate).getContent().getValue();
+        double value2 = (double) value.getValue();
+        return value2;
     }
 
     @Override
     public String getCellContentAsString(String cooord) throws BadCoordinateException {
-        return null;
+        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(cooord);
+        return ((ContentText)spreadsheet.cells.getCell(numCoordinate).getContent()).getValue();
     }
 
     @Override
     public String getCellFormulaExpression(String coord) throws BadCoordinateException {
-        return null;
+        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
+        return ((ContentFormula)spreadsheet.cells.getCell(numCoordinate).getContent()).getWrittenData();
+//        ContentFormula content = spreadsheet.cells.getCell(numCoordinate).getContent();
+//        ((ContentFormula) content).getWrittenData();
     }
 
     @Override
     public void saveSpreadSheetToFile(String nameInUserDir) throws SavingSpreadSheetException {
-        Controller.storeSpreadsheet(nameInUserDir);
+        this.storeSpreadsheet(nameInUserDir);
     }
 
     @Override
     public void readSpreadSheetFromFile(String nameInUserDir) throws ReadingSpreadSheetException {
         Controller.loadSpreadsheet(nameInUserDir);
+    }
+
+    public static ISpreadsheetControllerForChecker createSpreadsheetController() {
+        return new Controller();
     }
 }

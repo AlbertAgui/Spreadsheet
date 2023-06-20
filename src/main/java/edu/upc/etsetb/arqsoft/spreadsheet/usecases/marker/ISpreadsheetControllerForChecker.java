@@ -8,7 +8,6 @@ import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
-import org.example.Controller;
 /**
  *
  * @author Juan Carlos Cruellas at Universidad Politécnica de Cataluña
@@ -100,7 +99,6 @@ public interface ISpreadsheetControllerForChecker {
      * aforementioned file.
      */
     public void readSpreadSheetFromFile(String nameInUserDir) throws ReadingSpreadSheetException ;
-    
-    
+
     
 }

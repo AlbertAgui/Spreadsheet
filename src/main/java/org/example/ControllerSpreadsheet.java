@@ -1,5 +1,7 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -185,7 +187,7 @@ public class ControllerSpreadsheet {
     }
 
 
-    public static void recomputeSpreadsheet(Spreadsheet spreadsheet){
+    public static void recomputeSpreadsheet(Spreadsheet spreadsheet) throws ContentException {
         Set<NumCoordinate> visited = new HashSet<>();
         for (NumCoordinate coordinate: spreadsheet.cells.getCoordinateSet()) {
             if(!visited.contains(coordinate)) {
@@ -204,7 +206,7 @@ public class ControllerSpreadsheet {
     }
 
     //Prerequisite don't recompute if circular dependency
-    private static void recomputeCellDependants(Spreadsheet spreadsheet, NumCoordinate numCoordinate) {
+    private static void recomputeCellDependants(Spreadsheet spreadsheet, NumCoordinate numCoordinate) throws ContentException {
         Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for(NumCoordinate dependant : dependants){

@@ -1,5 +1,7 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
+
 import java.io.*;
 import java.util.LinkedList;
 
@@ -52,7 +54,7 @@ public class Load_store { // catch (Exception e)
             }
 
             if (ControllerSpreadsheet.hasSpreadsheetCircularDependencies(spreadsheet)) {
-                throw new RuntimeException("Circular dependency");
+                throw new CircularDependencyException("Circular dependency");
             }
             ControllerSpreadsheet.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
             //add compute cell values all spreadsheet
