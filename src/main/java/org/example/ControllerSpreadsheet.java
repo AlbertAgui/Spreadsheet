@@ -1,6 +1,7 @@
 package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -18,7 +19,7 @@ public class ControllerSpreadsheet {
             "([A-Z]+)(\\d+)"
     ));
 
-    public static LinkedList<String> tokenize(String formula_body) {
+    public static LinkedList<String> tokenize(String formula_body) throws ContentException {
         LinkedList<String> tokens = new LinkedList<>();
         String expectedToken = TokenMatchInfos.get(6);
         while(!formula_body.isEmpty()) {
@@ -38,7 +39,7 @@ public class ControllerSpreadsheet {
                 }
             }
             if (!found) {
-                throw new RuntimeException("Tokenize: Invalid token: \"" + formula_body + "\"");
+                throw new ContentException("Tokenize: Invalid token: \"" + formula_body + "\"");
             }
         }
         return tokens;
@@ -161,7 +162,7 @@ public class ControllerSpreadsheet {
     }
 
 
-    private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) {
+    private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) throws ContentException {
         visited.add(numCoordinate);
         Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
         Content content = cell.getContent();
@@ -297,7 +298,7 @@ public class ControllerSpreadsheet {
                             recoverCell.setContent(old_content);
                             spreadsheet.cells.addCell(numCoordinate, recoverCell);
                         }
-                        throw new RuntimeException("Circular dependency");
+                        throw new CircularDependencyException("Circular dependency");
                     } else {
                         //recompute values
                         recomputeCellDependants(spreadsheet, numCoordinate);

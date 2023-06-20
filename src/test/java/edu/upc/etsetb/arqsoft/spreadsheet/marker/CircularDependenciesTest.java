@@ -235,7 +235,7 @@ public class CircularDependenciesTest extends SuperClassForTests {
                 this.printlnAlways("\n\tCase 3: modifying another cell in such a way that "
                         + "it introduces an indirect circular dependency: " + valorTotal * 0.35);
                 instance.setCellContent("A6", "=A1+5");
-                error = this.sAssertTrue(false, 0, "Cell A1 contains "
+                error = this.sAssertTrue(false, 0, "SCOPE: Cell A1 contains "
                         + "the formula =A2+A3+A4+A5, cell A2 contains the formula "
                         + "=A6+A7+A8, and now a try has been done to "
                         + "set cell A6 to =A1+5. This introduces a circular "

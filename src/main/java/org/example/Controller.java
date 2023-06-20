@@ -55,9 +55,11 @@ public class Controller implements ISpreadsheetControllerForChecker {
     @Override
     public double getCellContentAsDouble(String coord) throws BadCoordinateException, NoNumberException {
         NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
-        ContentNumerical value;
-        value = (ContentNumerical)spreadsheet.cells.getCell(numCoordinate).getContent().getValue();
-        double value2 = (double) value.getValue();
+        ContentNumerical content = (ContentNumerical)spreadsheet.cells.getCell(numCoordinate).getContent();
+        if(content == null)
+            return (double) 0;
+        float value = content.getValue();
+        double value2 = (double) value;
         return value2;
     }
 

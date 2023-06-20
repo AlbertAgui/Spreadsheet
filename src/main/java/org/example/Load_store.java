@@ -110,7 +110,13 @@ public class Load_store { // catch (Exception e)
                         } else if (content instanceof ContentText) {
                             writer.write(((ContentText) content).getValue());
                         } else if (content instanceof ContentNumerical) {
-                            writer.write(Float.toString(((ContentNumerical) content).getValue()));
+                            double value = ((ContentNumerical) content).getValue();
+                            if (value % 1 == 0) {  // Check if the value is an integer
+                                writer.write(Integer.toString((int) value));  // Write integer value without decimal point
+                            } else {
+                                writer.write(Double.toString(value));  // Write decimal value with decimal point
+                            }
+//                            writer.write(Float.toString(((ContentNumerical) content).getValue()));
                         }
                     }
                 }
