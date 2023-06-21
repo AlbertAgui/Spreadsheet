@@ -359,8 +359,20 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                     }
                     pendingFunctions--;
                 }
-            /*} else if (isColon(next)) {
-                localArgCnt = localArgCnt + 2; //2 extra tokens for an argument which contains it*/
+            } else if (isColon(next)) { //Compute extra arguments
+                String down, top;
+                top = tokens.get(i-1);
+                down = tokens.get(i+1);
+                NumCoordinate endCoordinate = Translate_coordinate.translate_coordinate_to_int(top);
+                NumCoordinate startCoordinate = Translate_coordinate.translate_coordinate_to_int(down);
+                int startRow, endRow, startColum, endColum;
+                startRow = startCoordinate.getNumRow();
+                endRow = endCoordinate.getNumRow();
+                startColum = startCoordinate.getNumColum();
+                endColum = endCoordinate.getNumColum();
+                int rowCnt = endRow - startRow + 1;
+                int ColumCnt = endColum - startColum + 1;
+                localArgCnt = localArgCnt + (rowCnt * ColumCnt);
             } else if (isSemicolon(next)) {
                 localArgCnt++;
             }
@@ -454,22 +466,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             for (int i = 0; i < postfix.size(); ++i) {
                 String next = postfix.get(i);
                 if (is_number(next) || is_cell_id(next)) { //MUST BE MODIFIED
-                    /*if (is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
-                        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
-                        Content content = cell.getContent();
-                        Float value = (float) 0;
-                        if (content instanceof ContentFormula) {
-                            value = ((ContentFormula) content).getValue();
-                        } else if (content instanceof ContentText) {
-                            throw new RuntimeException("Cell content text is a formula cell dependency!");
-                        } else if (content instanceof ContentNumerical) {
-                            value = ((ContentNumerical) content).getValue();
-                        }
-                        aux_stack.push(Float.toString(value));
-                    } else {*/
-                        aux_stack.push(next);
-                    //}
+                    aux_stack.push(next);
                 } else if (is_operator(next)) { //should not be necessary, but in functions something here will be modified
                     String down, top;
                     top = aux_stack.pop();
@@ -504,10 +501,9 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                             } else if (content instanceof ContentNumerical) {
                                 value = ((ContentNumerical) content).getValue();
                             }
-                            result += value;
+                            aux_stack.push(Float.toString(value));
                         }
                     }
-                    aux_stack.push(Float.toString(result));
                 }
             }
             String next = aux_stack.pop();
@@ -537,7 +533,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
 
-    public static Float compute(String formula_body, Spreadsheet spreadsheet) throws ContentException {
+    public static Float compute(String formula_body, Spreadsheet spreadsheet) throws ContentException,BadCoordinateException {
         float value = 0;
         try {
             LinkedList<String> tokens = tokenize(formula_body);
@@ -547,10 +543,13 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             LinkedList<String> postfix = generate_postfix(tokens);
             value = evaluate_postfix(spreadsheet, postfix, tokens);
         } catch (Exception e) {
+            if (e instanceof BadCoordinateException) {
+                throw new BadCoordinateException("Compute: " + e.getMessage());
+            }
             if (e instanceof ContentException) {
                 throw new ContentException("Compute: " + e.getMessage());
             } else {
-                throw new ContentException("Compute: " + e.getMessage());
+                throw new RuntimeException("Compute: " + e.getMessage());
             }
         }
         return value;

@@ -24,7 +24,7 @@ public class Main {
         Controller.editCell("A2","=
         2:3 + SUMA(A1;2)");//NO*/
         //Controller.editCell("A2","= A1 + SUMA( A1; (2 + SUMA(5:3)))"); //NO
-        Controller.editCell("A6", "1");
+        /*Controller.editCell("A6", "1");
         Controller.editCell("A7", "2");
         Controller.editCell("A8", "3");
         Controller.editCell("A9", "4");
@@ -38,8 +38,8 @@ public class Main {
         Controller.editCell("A3", "=A9+A10+A11");
         Controller.editCell("A4", "=A12+A13");
         Controller.editCell("A5", "=A14+1");
-        Controller.editCell("A25", "This is a string");
-        Controller.editCell("A2","=A1+A7+A8");
+        Controller.editCell("A25", "This is a string");*/
+        Controller.editCell("I1","=(A5*4)/(A2+A2)+SUMA(A1;A2;3;4;5;A6:A12)");
         //Controller.editCell("A2","= A1 + SUMA( A1; SUMA((C1:C5); C1:C5))");//YES
         //Controller.editCell("A2","= SUMA( A1; SUMA((C1:C5); C1:C5; SUMA(); SUMA()))");//YES
         //Controller.editCell("A2","= 1/0"); //SHOULD NOT WORK
