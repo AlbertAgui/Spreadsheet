@@ -59,14 +59,15 @@ public class Controller implements ISpreadsheetControllerForChecker {
        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
        Content content = cell.getContent();
-        if(content == null)
-            return (double) 0;
-        else if (content instanceof ContentText) {
+        double value = (double) 0;
+        if (content instanceof ContentText) {
             throw new NoNumberException();
         }
-        float value = (float) content.getValue();
-        double value2 = (double) value;
-        return value2;
+        else if (content instanceof ContentFormula || content instanceof ContentNumerical) {
+            value = (double) content.getValue();
+        }
+        return value;
+//                            writer.write(Float.toString(((ContentNumerical) content).getValue()));
     }
 
     @Override
