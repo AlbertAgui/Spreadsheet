@@ -1,6 +1,9 @@
 package org.example;
 
 
+import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
+import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
+
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -39,7 +42,7 @@ public class Commands {
         }
     }
 
-    private static String[] RF(String userCommand) {
+    private static String[] RF(String userCommand) throws SavingSpreadSheetException, ReadingSpreadSheetException {
         String flag = "read_file_command";
         userCommand = removeFirstWord(userCommand);
         String pattern = "[\\w\\d]+/[^/]+\\.[\\w\\d]+";
@@ -80,7 +83,7 @@ public class Commands {
         return new String[]{flag};
     }
 
-    public static String[] L(String userCommand) {
+    public static String[] L(String userCommand) throws ReadingSpreadSheetException {
         userCommand = removeFirstWord(userCommand);
         String flag = "Load";
 //        String pattern = "^([a-zA-Z]:)?(/[a-zA-Z0-9_.-]+)+/?$";
@@ -90,13 +93,14 @@ public class Commands {
             String path = matcher.group(0);
             Controller.loadSpreadsheet(path);
             return new String[]{flag, matcher.group(0)};
-        } else {
+        }/* else {
             System.out.println("Loading Failed, File not found or incorrect format");
             return null;
-        }
+        }*/
+        return null;
     }
 
-    public static String[] S(String userCommand) {
+    public static String[] S(String userCommand) throws SavingSpreadSheetException {
         userCommand = removeFirstWord(userCommand);
         String flag = "Save";
 //        String pattern = "^([a-zA-Z]:)?(/[a-zA-Z0-9_.-]+)+/?$";
@@ -112,10 +116,13 @@ public class Commands {
         }
     }
 
-    public static void input_commands(String[] args) {
+    public static void input_commands(String[] args) throws ReadingSpreadSheetException, SavingSpreadSheetException {
         Scanner scanner = new Scanner(System.in);
         String uc = "";
-        System.out.println("RF address = read commands from a file \n C for create an spread sheet \n E CellCordinate Input for editing a cell \n L path for load \n S path for Store");
+        System.out.println("RF address = read commands from a file \n" +
+                " C for create an spread sheet \n" +
+                " E CellCordinate Input for editing a cell \n" +
+                " L path for load \n S path for Store");
         while (!uc.equals("quit")) {
             System.out.print("Enter command:");
             uc = scanner.nextLine();
@@ -134,6 +141,10 @@ public class Commands {
                 break;
             } else {
                 System.out.println("Wrong Command\n Please Enter correctly");
+                System.out.println("RF address = read commands from a file \n" +
+                        " C for create an spread sheet \n" +
+                        " E CellCordinate Input for editing a cell \n" +
+                        " L path for load \n S path for Store");
             }
         }
     }
