@@ -347,8 +347,8 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 }
                 pendingFunctions++;
             } else if(is_closed_claw(next)) {
-                localArgCnt++; //1 extra token for final argument
                 if (pendingFunctions > 0) { //functions being computed
+                    localArgCnt++; //1 extra token for final argument
                     functionsNumArgs.add(localArgCnt);
                     if (pendingFunctions > 1) { //Pending functions stored
                         localArgCnt = pendingArgCnts.pop();
