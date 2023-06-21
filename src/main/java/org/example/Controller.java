@@ -58,6 +58,9 @@ public class Controller implements ISpreadsheetControllerForChecker {
        Content content = spreadsheet.cells.getCell(numCoordinate).getContent();
         if(content == null)
             return (double) 0;
+        else if (content instanceof ContentText) {
+            throw new NoNumberException();
+        }
         float value = (float) content.getValue();
         double value2 = (double) value;
         return value2;
