@@ -34,11 +34,12 @@ public class LoadFromFile {
                         NumCoordinate numCoordinate = new NumCoordinate(nRow, nColum);
                         switch (inputType) {
                             case "Formula":
-                                String formulaBody = input.substring(1);
+                                String inputFormula = input.replace(',',';');
+                                String formulaBody = inputFormula.substring(1);
                                 float newValue = Formula.compute(formulaBody, spreadsheet);
                                 LinkedList<String> new_dependencies = ContentTools.tokenize(formulaBody);
                                 ContentTools.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
-                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, newValue); //CHANGE VALUE
+                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, inputFormula, newValue); //CHANGE VALUE
                                 break;
                             case "Text":
                                 ControllerSpreadsheet.updateText(spreadsheet, numCoordinate, input);

@@ -40,7 +40,7 @@ public class SaveToFile {
                         Content content = cell.getContent();
                         //Different kinds of cells, add inheritance!
                         if (content instanceof ContentFormula) {
-                            writer.write(((ContentFormula) content).getWrittenData());
+                            writer.write(((ContentFormula) content).getWrittenData().replace(';',','));
                         } else if (content instanceof ContentText) {
                             writer.write(((ContentText) content).getValue());
                         } else if (content instanceof ContentNumerical) {
