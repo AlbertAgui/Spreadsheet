@@ -476,6 +476,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 } else if (is_function(next)) {
                     aux_stack.push(Float.toString(functionCompute(spreadsheet, next, functionsNumArgs.remove(), aux_stack)));
                 } else if (isColon(next)) {
+                    float result = 0;
                     String down, top;
                     top = aux_stack.pop();
                     down = aux_stack.pop();
@@ -501,9 +502,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                             } else if (content instanceof ContentNumerical) {
                                 value = ((ContentNumerical) content).getValue();
                             }
-                            aux_stack.push(Float.toString(value));
+                            result += value;
                         }
                     }
+                    aux_stack.push(Float.toString(result));
                 }
             }
             String next = aux_stack.pop();
