@@ -2,14 +2,18 @@ package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
+import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
+import org.example.TUI.TextualInterface;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
-    public static void main(String[] args) throws ContentException, CircularDependencyException {
+    public static void main(String[] args) throws ContentException, CircularDependencyException, ReadingSpreadSheetException, SavingSpreadSheetException {
+        TextualInterface.input_commands(null);
         //Commands.input_commands(null);
         //TEST 1
-        Controller.createEmptySpreadsheet();
+//        Controller.createEmptySpreadsheet();
         //Controller.editCell("A1","100");
         /*Controller.editCell("A1","=A3"); //YES
         Controller.editCell("A3","=A2+4+5 *4/(3+6/ 5+3*(4))"); //YES
@@ -24,22 +28,22 @@ public class Main {
         Controller.editCell("A2","=
         2:3 + SUMA(A1;2)");//NO*/
         //Controller.editCell("A2","= A1 + SUMA( A1; (2 + SUMA(5:3)))"); //NO
-        Controller.editCell("A6", "1");
-        Controller.editCell("A7", "2");
-        Controller.editCell("A8", "3");
-        Controller.editCell("A9", "4");
-        Controller.editCell("A10", "5");
-        Controller.editCell("A11", "6");
-        Controller.editCell("A12", "7");
-        Controller.editCell("A13", "8");
-        Controller.editCell("A14", "9");
-        Controller.editCell("A1", "=A2+A3+A4+A5");
-        Controller.editCell("A2", "=A6+A7+A8");
-        Controller.editCell("A3", "=A9+A10+A11");
-        Controller.editCell("A4", "=A12+A13");
-        Controller.editCell("A5", "=A14+1");
-        Controller.editCell("A25", "This is a string");
-        Controller.editCell("A2","=A1+A7+A8");
+//        Controller.editCell("A6", "1");
+//        Controller.editCell("A7", "2");
+//        Controller.editCell("A8", "3");
+//        Controller.editCell("A9", "4");
+//        Controller.editCell("A10", "5");
+//        Controller.editCell("A11", "6");
+//        Controller.editCell("A12", "7");
+//        Controller.editCell("A13", "8");
+//        Controller.editCell("A14", "9");
+//        Controller.editCell("A1", "=A2+A3+A4+A5");
+//        Controller.editCell("A2", "=A6+A7+A8");
+//        Controller.editCell("A3", "=A9+A10+A11");
+//        Controller.editCell("A4", "=A12+A13");
+//        Controller.editCell("A5", "=A14+1");
+//        Controller.editCell("A25", "This is a string");
+//        Controller.editCell("A2","=A1+A7+A8");
         //Controller.editCell("A2","= A1 + SUMA( A1; SUMA((C1:C5); C1:C5))");//YES
         //Controller.editCell("A2","= SUMA( A1; SUMA((C1:C5); C1:C5; SUMA(); SUMA()))");//YES
         //Controller.editCell("A2","= 1/0"); //SHOULD NOT WORK

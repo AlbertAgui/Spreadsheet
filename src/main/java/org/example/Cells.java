@@ -85,45 +85,45 @@ public class Cells {
         return coordinates;
     }
 
-    public void printCells() {
-        NumCoordinate size = getSize();
-
-        if (size == null) {
-            throw new RuntimeException("Print spreadsheet: spreadsheet size is null");
-        }
-
-        int cellWidth = 15; // Adjust the width as needed
-
-        for (int i = 1; i <= size.getNumRow(); i++) {
-            for (int j = 1; j <= size.getNumColum(); j++) {
-                NumCoordinate coordinate = new NumCoordinate(i, j);
-                Cell cell = getCell(coordinate);
-
-                if (cell != null) {
-                    Content content = cell.getContent();
-                    String cellValue;
-                    if (content instanceof ContentFormula) {
-                        cellValue = ((ContentFormula) content).getValue() + " " + ((ContentFormula) content).getWrittenData();
-                    } else if (content instanceof ContentText) {
-                        cellValue = ((ContentText) content).getValue();
-                    } else if (content instanceof ContentNumerical) {
-                        cellValue = String.valueOf(((ContentNumerical) content).getValue());
-                    } else {
-                        cellValue = "";
-                    }
-                    int padding = 1;
-                    String formattedCell = "";
-                    padding = cellWidth - cellValue.length();
-                    int leftPadding = padding / 2;
-                    int rightPadding = padding - leftPadding;
-                    formattedCell = String.format("[%-" + Math.max(1,leftPadding) + "s%s%-" + Math.max(1,rightPadding) + "s] ", "", cellValue, "");
-
-                    System.out.print(formattedCell);
-                } else {
-                    System.out.print("[ ] ");
-                }
-            }
-            System.out.println();
-        }
-    }
+//    public void printCells() {
+//        NumCoordinate size = getSize();
+//
+//        if (size == null) {
+//            throw new RuntimeException("Print spreadsheet: spreadsheet size is null");
+//        }
+//
+//        int cellWidth = 15; // Adjust the width as needed
+//
+//        for (int i = 1; i <= size.getNumRow(); i++) {
+//            for (int j = 1; j <= size.getNumColum(); j++) {
+//                NumCoordinate coordinate = new NumCoordinate(i, j);
+//                Cell cell = getCell(coordinate);
+//
+//                if (cell != null) {
+//                    Content content = cell.getContent();
+//                    String cellValue;
+//                    if (content instanceof ContentFormula) {
+//                        cellValue = ((ContentFormula) content).getValue() + " " + ((ContentFormula) content).getWrittenData();
+//                    } else if (content instanceof ContentText) {
+//                        cellValue = ((ContentText) content).getValue();
+//                    } else if (content instanceof ContentNumerical) {
+//                        cellValue = String.valueOf(((ContentNumerical) content).getValue());
+//                    } else {
+//                        cellValue = "";
+//                    }
+//                    int padding = 1;
+//                    String formattedCell = "";
+//                    padding = cellWidth - cellValue.length();
+//                    int leftPadding = padding / 2;
+//                    int rightPadding = padding - leftPadding;
+//                    formattedCell = String.format("[%-" + Math.max(1,leftPadding) + "s%s%-" + Math.max(1,rightPadding) + "s] ", "", cellValue, "");
+//
+//                    System.out.print(formattedCell);
+//                } else {
+//                    System.out.print("[ ] ");
+//                }
+//            }
+//            System.out.println();
+//        }
+//    }
 }

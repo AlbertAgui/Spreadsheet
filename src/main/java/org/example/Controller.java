@@ -1,6 +1,5 @@
 package org.example;
 
-import java.io.IOException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
@@ -8,7 +7,9 @@ import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ISpreadsheetControllerForChecker;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
-import org.example.Content;
+import org.example.LoadAndSave.LoadFromFile;
+import org.example.LoadAndSave.SaveToFile;
+import org.example.TUI.TextualInterface;
 
 
 public class Controller implements ISpreadsheetControllerForChecker {
@@ -19,7 +20,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
             ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
-            spreadsheet.cells.printCells();
+//            spreadsheet.cells.printCells();
         } catch (CircularDependencyException e) {
             throw new CircularDependencyException("Error loading spreadsheet: " + e.getMessage());
         }
@@ -31,8 +32,9 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     public static void loadSpreadsheet(String path) throws ReadingSpreadSheetException {
         try {
-            spreadsheet = Load_store.loadspreadsheet(path);
-            spreadsheet.cells.printCells();
+            spreadsheet = LoadFromFile.loadSpreadsheet(path);
+//            TextualInterface.printCells(spreadsheet.cells);
+//            spreadsheet.cells.printCells();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new ReadingSpreadSheetException();
@@ -41,8 +43,8 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     public static void storeSpreadsheet(String path) throws SavingSpreadSheetException {
         try {
-            Load_store.storespreadsheet(path, spreadsheet);
-            spreadsheet.cells.printCells();
+            SaveToFile.storeSpreadsheet(path, spreadsheet);
+//            spreadsheet.cells.printCells();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new SavingSpreadSheetException();
@@ -96,5 +98,9 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     public static ISpreadsheetControllerForChecker createSpreadsheetController() {
         return new Controller();
+    }
+
+    public static Spreadsheet getSpreadsheet(){
+        return spreadsheet;
     }
 }

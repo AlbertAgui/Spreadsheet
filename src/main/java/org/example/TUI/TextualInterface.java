@@ -1,10 +1,11 @@
-package org.example;
+package org.example.TUI;
 
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
+import org.example.*;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -13,7 +14,49 @@ import java.util.regex.Pattern;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-public class Commands {
+public class TextualInterface {
+
+    public static void printCells(Cells cells) {
+        NumCoordinate size = cells.getSize();
+
+        if (size == null) {
+            throw new RuntimeException("Print spreadsheet: spreadsheet size is null");
+        }
+
+        int cellWidth = 15; // Adjust the width as needed
+
+        for (int i = 1; i <= size.getNumRow(); i++) {
+            for (int j = 1; j <= size.getNumColum(); j++) {
+                NumCoordinate coordinate = new NumCoordinate(i, j);
+                Cell cell = cells.getCell(coordinate);
+
+                if (cell != null) {
+                    Content content = cell.getContent();
+                    String cellValue;
+                    if (content instanceof ContentFormula) {
+                        cellValue = ((ContentFormula) content).getValue() + " " + ((ContentFormula) content).getWrittenData();
+                    } else if (content instanceof ContentText) {
+                        cellValue = ((ContentText) content).getValue();
+                    } else if (content instanceof ContentNumerical) {
+                        cellValue = String.valueOf(((ContentNumerical) content).getValue());
+                    } else {
+                        cellValue = "";
+                    }
+                    int padding = 1;
+                    String formattedCell = "";
+                    padding = cellWidth - cellValue.length();
+                    int leftPadding = padding / 2;
+                    int rightPadding = padding - leftPadding;
+                    formattedCell = String.format("[%-" + Math.max(1, leftPadding) + "s%s%-" + Math.max(1, rightPadding) + "s] ", "", cellValue, "");
+
+                    System.out.print(formattedCell);
+                } else {
+                    System.out.print("[ ] ");
+                }
+            }
+            System.out.println();
+        }
+    }
     public static String removeFirstWord(String inputString) {
         // Split the string into words
         String[] words = inputString.split("\\s+");
@@ -37,6 +80,7 @@ public class Commands {
             String cellCoordinate = matcher.group(1);
             String content = matcher.group(2);
             Controller.editCell(cellCoordinate, content);
+            printCells(Controller.getSpreadsheet().cells);
             return new String[]{flag, cellCoordinate, content};
         } else {
             System.out.println("Error Editing cell please check the command and try again");
@@ -86,6 +130,7 @@ public class Commands {
     public static String[] C() {
         String flag = "create spreadsheet";
         Controller.createEmptySpreadsheet();
+        printCells(Controller.getSpreadsheet().cells);
         return new String[]{flag};
     }
 
@@ -98,6 +143,7 @@ public class Commands {
         if (matcher.matches()) {
             String path = matcher.group(0);
             Controller.loadSpreadsheet(path);
+            printCells(Controller.getSpreadsheet().cells);
             return new String[]{flag, matcher.group(0)};
         }/* else {
             System.out.println("Loading Failed, File not found or incorrect format");
@@ -115,6 +161,7 @@ public class Commands {
         if (matcher.matches()) {
             String path = matcher.group(0);
             Controller.storeSpreadsheet(path);
+            printCells(Controller.getSpreadsheet().cells);
             return new String[]{flag, matcher.group(0)};
         } else {
             System.out.println("Saving Failed, Please check the path");
