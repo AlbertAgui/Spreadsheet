@@ -14,9 +14,12 @@ public class ControllerSpreadsheet {
             "[+-]",
             "[*/]",
             "\\(",
-            "\\)",
-            "[-+]?\\d*\\.?\\d+",//093 will be supported... is it fine?
-            "([A-Z]+)(\\d+)"
+            "\\)",//
+            "[-+]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?",//093 will be supported... is it fine?
+            "([A-Z]+)(\\d+)",
+            "\\:",
+            "\\;",
+            "SUMA" //function
     ));
 
     public static LinkedList<String> tokenize(String formula_body) throws ContentException {
@@ -48,7 +51,7 @@ public class ControllerSpreadsheet {
 
     private static String textPattern = "^(?!=).*$";
     private static String formulaPattern = "^=.*$";
-    private static String numPattern = "^\s*[-+]?\\d*\\.?\\d+\s*$";
+    private static String numPattern = "^"+"\\s*"+TokenMatchInfos.get(5)+"\\s*"+"$";
 
     public static String getContentType(String formula_body) {
         Pattern textRegex = Pattern.compile(textPattern);
