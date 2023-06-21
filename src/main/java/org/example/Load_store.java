@@ -1,5 +1,7 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
+
 import java.io.*;
 import java.util.LinkedList;
 
@@ -52,7 +54,7 @@ public class Load_store { // catch (Exception e)
             }
 
             if (ControllerSpreadsheet.hasSpreadsheetCircularDependencies(spreadsheet)) {
-                throw new RuntimeException("Circular dependency");
+                throw new CircularDependencyException("Circular dependency");
             }
             ControllerSpreadsheet.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
             //add compute cell values all spreadsheet
@@ -108,7 +110,13 @@ public class Load_store { // catch (Exception e)
                         } else if (content instanceof ContentText) {
                             writer.write(((ContentText) content).getValue());
                         } else if (content instanceof ContentNumerical) {
-                            writer.write(Float.toString(((ContentNumerical) content).getValue()));
+                            double value = ((ContentNumerical) content).getValue();
+                            if (value % 1 == 0) {  // Check if the value is an integer
+                                writer.write(Integer.toString((int) value));  // Write integer value without decimal point
+                            } else {
+                                writer.write(Double.toString(value));  // Write decimal value with decimal point
+                            }
+//                            writer.write(Float.toString(((ContentNumerical) content).getValue()));
                         }
                     }
                 }

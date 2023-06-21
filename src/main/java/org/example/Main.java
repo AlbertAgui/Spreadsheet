@@ -57,6 +57,8 @@ public class Main {
 
         //Controller.editCell("A1", "hey");
         //ControllerSpreadsheet.updateDependencies();
+//        Commands.input_commands(null);
+//        Controller.loadSpreadsheet("Data/t1.txt");
         //Controller.createEmptySpreadsheet();
         //TEST1
         /*Controller.loadSpreadsheet("Data/t1.txt");
@@ -129,5 +131,10 @@ public class Main {
         Controller.editCell("A2","=A1+(2*5)/(3+A3)");
         System.out.println("---------");
         Controller.storeSpreadsheet("Data/t2wr.txt");*/
+//        TEST5
+        Controller.createEmptySpreadsheet();
+        Controller.editCell("A1","=A2+A3+A4+A5");
+        Controller.editCell("A2","=A6+A7+A8");
+        Controller.editCell("A6","=A1+5");
     }
 }

@@ -1,5 +1,7 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +28,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             "SUMA" //function
     ));
 
-    public static LinkedList<String> tokenize(String formula_body) {
+    public static LinkedList<String> tokenize(String formula_body) throws ContentException {
         LinkedList<String> tokens = new LinkedList<>();
         while(!formula_body.isEmpty()) {
             Boolean found = false;
@@ -45,7 +47,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 }
             }
             if (!found) {
-                throw new RuntimeException("Tokenize: Invalid token: \"" + formula_body + "\"");
+                throw new ContentException("Tokenize: Invalid token: \"" + formula_body + "\"");
             }
         }
         return tokens;
@@ -526,7 +528,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
 
-    public static Float compute(String formula_body, Spreadsheet spreadsheet) {
+    public static Float compute(String formula_body, Spreadsheet spreadsheet) throws ContentException {
         float value = 0;
         try {
             LinkedList<String> tokens = tokenize(formula_body);
@@ -536,9 +538,14 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             LinkedList<String> postfix = generate_postfix(tokens);
             value = evaluate_postfix(spreadsheet, postfix, tokens);
         } catch (Exception e) {
-            throw new RuntimeException("Compute: " + e.getMessage());
+            if (e instanceof ContentException) {
+                throw new ContentException("Compute: " + e.getMessage());
+            } else {
+                throw new RuntimeException("Compute: " + e.getMessage());
+            }
         }
         return value;
     }
+
 
 }

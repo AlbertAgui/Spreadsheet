@@ -1,5 +1,8 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +22,7 @@ public class ControllerSpreadsheet {
             "SUMA" //function
     ));
 
-    public static LinkedList<String> tokenize(String formula_body) {
+    public static LinkedList<String> tokenize(String formula_body) throws ContentException {
         LinkedList<String> tokens = new LinkedList<>();
         String expectedToken = TokenMatchInfos.get(6);
         while(!formula_body.isEmpty()) {
@@ -39,7 +42,7 @@ public class ControllerSpreadsheet {
                 }
             }
             if (!found) {
-                throw new RuntimeException("Tokenize: Invalid token: \"" + formula_body + "\"");
+                throw new ContentException("Tokenize: Invalid token: \"" + formula_body + "\"");
             }
         }
         return tokens;
@@ -162,7 +165,7 @@ public class ControllerSpreadsheet {
     }
 
 
-    private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) {
+    private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) throws ContentException {
         visited.add(numCoordinate);
         Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
         Content content = cell.getContent();
@@ -188,7 +191,7 @@ public class ControllerSpreadsheet {
     }
 
 
-    public static void recomputeSpreadsheet(Spreadsheet spreadsheet){
+    public static void recomputeSpreadsheet(Spreadsheet spreadsheet) throws ContentException {
         Set<NumCoordinate> visited = new HashSet<>();
         for (NumCoordinate coordinate: spreadsheet.cells.getCoordinateSet()) {
             if(!visited.contains(coordinate)) {
@@ -207,7 +210,7 @@ public class ControllerSpreadsheet {
     }
 
     //Prerequisite don't recompute if circular dependency
-    private static void recomputeCellDependants(Spreadsheet spreadsheet, NumCoordinate numCoordinate) {
+    private static void recomputeCellDependants(Spreadsheet spreadsheet, NumCoordinate numCoordinate) throws ContentException {
         Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for(NumCoordinate dependant : dependants){
@@ -298,7 +301,7 @@ public class ControllerSpreadsheet {
                             recoverCell.setContent(old_content);
                             spreadsheet.cells.addCell(numCoordinate, recoverCell);
                         }
-                        throw new RuntimeException("Circular dependency");
+                        throw new CircularDependencyException("Circular dependency");
                     } else {
                         //recompute values
                         recomputeCellDependants(spreadsheet, numCoordinate);
