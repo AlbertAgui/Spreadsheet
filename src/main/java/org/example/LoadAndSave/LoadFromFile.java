@@ -39,15 +39,15 @@ public class LoadFromFile {
                                 float newValue = Formula.compute(formulaBody, spreadsheet);
                                 LinkedList<String> new_dependencies = ContentTools.getDependencies(formulaBody);
                                 ContentTools.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
-                                ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, formulaBody, newValue); //CHANGE VALUE
+                                ContentTools.updateFormula(spreadsheet, numCoordinate, formulaBody, newValue); //CHANGE VALUE
                                 break;
                             case "Text":
-                                ControllerSpreadsheet.updateText(spreadsheet, numCoordinate, input);
+                                ContentTools.updateText(spreadsheet, numCoordinate, input);
                                 break;
                             case "Numerical":
                                 String inputTrim = input.trim(); //ERASE SPACES
                                 float t_value = Float.parseFloat(inputTrim);
-                                ControllerSpreadsheet.updateNumerical(spreadsheet, numCoordinate, t_value);
+                                ContentTools.updateNumerical(spreadsheet, numCoordinate, t_value);
                                 break;
                             default:
                                 System.out.println("Load: No supported input" + inputType);

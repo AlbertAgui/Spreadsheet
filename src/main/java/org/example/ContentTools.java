@@ -8,6 +8,47 @@ import java.util.regex.Pattern;
 
 public class ContentTools {
 
+    public static void updateFormula(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String writtenContent, float value){
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Content new_content = cell.getContent();
+        if (!(new_content instanceof ContentFormula)) {
+            new_content = new ContentFormula();
+        }
+        ((ContentFormula) new_content).setWrittenData(writtenContent);
+        ((ContentFormula) new_content).setValue(value);
+        cell.setContent(new_content);
+        spreadsheet.cells.addCell(numCoordinate, cell);
+    }
+
+    public static void updateText(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String value){
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Content new_content = cell.getContent();
+        if (!(new_content instanceof ContentText)) {
+            new_content = new ContentText();
+        }
+        ((ContentText) new_content).setValue(value);
+        cell.setContent(new_content);
+        spreadsheet.cells.addCell(numCoordinate, cell);
+    }
+
+    public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate numCoordinate, float value){
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Content new_content = cell.getContent();
+        if (!(new_content instanceof ContentNumerical)) {
+            new_content = new ContentNumerical();
+        }
+        ((ContentNumerical) new_content).setValue(value);
+        cell.setContent(new_content);
+        spreadsheet.cells.addCell(numCoordinate, cell);
+    }
+
+    public static Boolean isNownContent(Content content) {
+        if (content instanceof ContentFormula || content instanceof ContentText || content instanceof ContentNumerical) {
+            return true;
+        }
+        return false;
+    }
+
     public static final List<String> TokenMatchInfos = new ArrayList<>(Arrays.asList( //static="class instance, unique", final="static, constant"
             "\s",//is this needed?
             "[+-]",
@@ -105,7 +146,7 @@ public class ContentTools {
             dependants.eraseDependant(coordinate);
             if(dependants.getDependants().size() == 0) {//ERASE CELL IF NEEDED
                 Content content = cell.getContent();
-                if (!(content instanceof ContentFormula || content instanceof ContentText || content instanceof ContentNumerical)) {
+                if (isNownContent(content)) {
                     spreadsheet.cells.eraseCell(numCoordinate);
                 }
             } else {
@@ -160,7 +201,7 @@ public class ContentTools {
             Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,dependant);
             String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData(); //SHOULD BE FORMULA
             Float value = Formula.compute(writtenData, spreadsheet);
-            ControllerSpreadsheet.updateFormula(spreadsheet, dependant, writtenData, value);
+            updateFormula(spreadsheet, dependant, writtenData, value);
             recomputeCellDependants(spreadsheet, dependant);// TEMPORAL, LOW PERFORMANCE APPROACH
         }
     }

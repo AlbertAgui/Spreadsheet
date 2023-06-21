@@ -1,5 +1,7 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
+
 public class Content<T> {
     private T value;
 
@@ -9,5 +11,13 @@ public class Content<T> {
 
     public T getValue() {
         return this.value;
+    }
+
+    public String getContentText() {
+        return "";
+    }
+
+    public float getContentNumber() throws NoNumberException {
+        return 0;
     }
 }
