@@ -10,41 +10,6 @@ import java.util.*;
 
 public class SpreadsheetManager {
 
-    public static void updateFormula(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String writtenContent, float value){
-        Cell cell = getCellAny(spreadsheet, numCoordinate);
-        Content new_content = cell.getContent();
-        if (!(new_content instanceof ContentFormula)) {
-            new_content = new ContentFormula();
-        }
-        ((ContentFormula) new_content).setWrittenData(writtenContent);
-        ((ContentFormula) new_content).setValue(value);
-        cell.setContent(new_content);
-        spreadsheet.cells.addCell(numCoordinate, cell);
-    }
-
-    public static void updateText(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String value){
-        Cell cell = getCellAny(spreadsheet, numCoordinate);
-        Content new_content = cell.getContent();
-        if (!(new_content instanceof ContentText)) {
-            new_content = new ContentText();
-        }
-        ((ContentText) new_content).setValue(value);
-        cell.setContent(new_content);
-        spreadsheet.cells.addCell(numCoordinate, cell);
-    }
-
-    public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate numCoordinate, float value){
-        Cell cell = getCellAny(spreadsheet, numCoordinate);
-        Content new_content = cell.getContent();
-        if (!(new_content instanceof ContentNumerical)) {
-            new_content = new ContentNumerical();
-        }
-        ((ContentNumerical) new_content).setValue(value);
-        cell.setContent(new_content);
-        spreadsheet.cells.addCell(numCoordinate, cell);
-    }
-
-
     private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) throws ContentException {
         visited.add(numCoordinate);
         Cell cell = SpreadsheetManager.getCellExisting(spreadsheet,numCoordinate);
@@ -81,7 +46,7 @@ public class SpreadsheetManager {
                     Cell cell = SpreadsheetManager.getCellExisting(spreadsheet, numCoordinate);
                     String writtenData = ((ContentFormula)cell.getContent()).getWrittenData(); //SHOULD BE FORMULA
                     Float value = Formula.compute(writtenData, spreadsheet);
-                    updateFormula(spreadsheet, numCoordinate, writtenData, value);
+                    ContentTools.updateFormula(spreadsheet, numCoordinate, writtenData, value);
                 }
             }
         }
@@ -115,7 +80,7 @@ public class SpreadsheetManager {
                         old_dependencies = new LinkedList<>();
                     }
                     ContentTools.updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
-                    updateFormula(spreadsheet, numCoordinate, formulaBody, newValue);
+                    ContentTools.updateFormula(spreadsheet, numCoordinate, formulaBody, newValue);
                     if (ContentTools.hasCellCircularDependency(spreadsheet, numCoordinate)) {
                         ContentTools.updateDependencies(spreadsheet, numCoordinate, new_dependencies, old_dependencies); //redo dependencies
 
@@ -147,7 +112,7 @@ public class SpreadsheetManager {
                         }
                     }
                     //update written, value
-                    updateText(spreadsheet, numCoordinate, input);
+                    ContentTools.updateText(spreadsheet, numCoordinate, input);
                     //recompute values
                     ContentTools.recomputeCellDependants(spreadsheet, numCoordinate);
                     break;
@@ -166,7 +131,7 @@ public class SpreadsheetManager {
                     //update written, value
                     String inputTrim = input.trim(); //ERASE SPACES
                     newValue = Float.parseFloat(inputTrim);
-                    updateNumerical(spreadsheet, numCoordinate, newValue);
+                    ContentTools.updateNumerical(spreadsheet, numCoordinate, newValue);
                     //recompute values
                     ContentTools.recomputeCellDependants(spreadsheet, numCoordinate);
                     break;

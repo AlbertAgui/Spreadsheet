@@ -1,17 +1,53 @@
-package org.example.ContentPackage;
+package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
-import org.example.*;
-import org.example.Formula.Formula;
-import org.example.Formula.Parsing;
-import org.example.Formula.Tokenize;
-import org.example.Spreadsheet;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ContentTools {
+
+    public static void updateFormula(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String writtenContent, float value){
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Content new_content = cell.getContent();
+        if (!(new_content instanceof ContentFormula)) {
+            new_content = new ContentFormula();
+        }
+        ((ContentFormula) new_content).setWrittenData(writtenContent);
+        ((ContentFormula) new_content).setValue(value);
+        cell.setContent(new_content);
+        spreadsheet.cells.addCell(numCoordinate, cell);
+    }
+
+    public static void updateText(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String value){
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Content new_content = cell.getContent();
+        if (!(new_content instanceof ContentText)) {
+            new_content = new ContentText();
+        }
+        ((ContentText) new_content).setValue(value);
+        cell.setContent(new_content);
+        spreadsheet.cells.addCell(numCoordinate, cell);
+    }
+
+    public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate numCoordinate, float value){
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Content new_content = cell.getContent();
+        if (!(new_content instanceof ContentNumerical)) {
+            new_content = new ContentNumerical();
+        }
+        ((ContentNumerical) new_content).setValue(value);
+        cell.setContent(new_content);
+        spreadsheet.cells.addCell(numCoordinate, cell);
+    }
+
+    public static Boolean isNownContent(Content content) {
+        if (content instanceof ContentFormula || content instanceof ContentText || content instanceof ContentNumerical) {
+            return true;
+        }
+        return false;
+    }
 
     public static final List<String> TokenMatchInfos = new ArrayList<>(Arrays.asList( //static="class instance, unique", final="static, constant"
             "\s",//is this needed?
@@ -95,7 +131,7 @@ public class ContentTools {
         for (String element : add_dependencies) { //OJO
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(element);
-            Cell cell = SpreadsheetManager.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
+            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.addDependant(coordinate);
             cell.setDependants(dependants);
@@ -105,12 +141,12 @@ public class ContentTools {
         for (String element : erase_dependencies) {
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(element);
-            Cell cell = SpreadsheetManager.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
+            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.eraseDependant(coordinate);
             if(dependants.getDependants().size() == 0) {//ERASE CELL IF NEEDED
                 Content content = cell.getContent();
-                if (!(content instanceof ContentFormula || content instanceof ContentText || content instanceof ContentNumerical)) {
+                if (isNownContent(content)) {
                     spreadsheet.cells.eraseCell(numCoordinate);
                 }
             } else {
@@ -126,7 +162,7 @@ public class ContentTools {
         localVisited.add(numCoordinate);
         globalVisited.add(numCoordinate);
 
-        Cell cell = SpreadsheetManager.getCellAny(spreadsheet,numCoordinate); //ANY BECAUSE CELLS CAN BE NEW!
+        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY BECAUSE CELLS CAN BE NEW!
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for (NumCoordinate dependant : dependants) {
             if (!globalVisited.contains(dependant)){
@@ -159,13 +195,13 @@ public class ContentTools {
 
     //Prerequisite don't recompute if circular dependency
     public static void recomputeCellDependants(Spreadsheet spreadsheet, NumCoordinate numCoordinate) throws ContentException {
-        Cell cell = SpreadsheetManager.getCellExisting(spreadsheet,numCoordinate);
+        Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for(NumCoordinate dependant : dependants){
-            Cell cellDependant = SpreadsheetManager.getCellExisting(spreadsheet,dependant);
+            Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,dependant);
             String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData(); //SHOULD BE FORMULA
             Float value = Formula.compute(writtenData, spreadsheet);
-            SpreadsheetManager.updateFormula(spreadsheet, dependant, writtenData, value);
+            updateFormula(spreadsheet, dependant, writtenData, value);
             recomputeCellDependants(spreadsheet, dependant);// TEMPORAL, LOW PERFORMANCE APPROACH
         }
     }

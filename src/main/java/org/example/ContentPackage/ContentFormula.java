@@ -12,4 +12,14 @@ public class ContentFormula extends Content<Float> {
     public String getWrittenData() {
         return this.writtenData;
     }
+
+    @Override
+    public String getContentText() {
+        return getWrittenData();
+    }
+
+    @Override
+    public float getContentNumber() {
+        return super.getValue();
+    }
 }
