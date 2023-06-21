@@ -171,8 +171,7 @@ public class ContentTools {
         for(NumCoordinate dependant : dependants){
             Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,dependant);
             String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData(); //SHOULD BE FORMULA
-            String formulaBody = writtenData.substring(1);
-            Float value = Formula.compute(formulaBody, spreadsheet);
+            Float value = Formula.compute(writtenData, spreadsheet);
             ControllerSpreadsheet.updateFormula(spreadsheet, dependant, writtenData, value);
             recomputeCellDependants(spreadsheet, dependant);// TEMPORAL, LOW PERFORMANCE APPROACH
         }

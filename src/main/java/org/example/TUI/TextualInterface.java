@@ -34,7 +34,7 @@ public class TextualInterface {
                     Content content = cell.getContent();
                     String cellValue;
                     if (content instanceof ContentFormula) {
-                        cellValue = ((ContentFormula) content).getValue() + " " + ((ContentFormula) content).getWrittenData();
+                        cellValue = ((ContentFormula) content).getValue() + " = " + ((ContentFormula) content).getWrittenData();
                     } else if (content instanceof ContentText) {
                         cellValue = ((ContentText) content).getValue();
                     } else if (content instanceof ContentNumerical) {

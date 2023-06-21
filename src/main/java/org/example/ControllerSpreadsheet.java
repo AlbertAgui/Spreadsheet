@@ -50,8 +50,7 @@ public class ControllerSpreadsheet {
         Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
         Content content = cell.getContent();
         if(content instanceof ContentFormula) {
-            String input = ((ContentFormula) content).getWrittenData();
-            String body = input.substring(1);
+            String body = ((ContentFormula) content).getWrittenData();
             LinkedList <String> dependencies = ContentTools.tokenize(body);
             if(dependencies.isEmpty()) {
                 stack.add(numCoordinate);
@@ -81,8 +80,7 @@ public class ControllerSpreadsheet {
                     NumCoordinate numCoordinate = queue.remove();
                     Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet, numCoordinate);
                     String writtenData = ((ContentFormula)cell.getContent()).getWrittenData(); //SHOULD BE FORMULA
-                    String formulaBody = writtenData.substring(1);
-                    Float value = Formula.compute(formulaBody, spreadsheet);
+                    Float value = Formula.compute(writtenData, spreadsheet);
                     updateFormula(spreadsheet, numCoordinate, writtenData, value);
                 }
             }
@@ -117,7 +115,7 @@ public class ControllerSpreadsheet {
                         old_dependencies = new LinkedList<>();
                     }
                     ContentTools.updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
-                    updateFormula(spreadsheet, numCoordinate, input, newValue);
+                    updateFormula(spreadsheet, numCoordinate, formulaBody, newValue);
                     if (ContentTools.hasCellCircularDependency(spreadsheet, numCoordinate)) {
                         ContentTools.updateDependencies(spreadsheet, numCoordinate, new_dependencies, old_dependencies); //redo dependencies
 
