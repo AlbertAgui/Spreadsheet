@@ -10,7 +10,7 @@ import org.example.TUI.TextualInterface;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) throws ContentException, CircularDependencyException, ReadingSpreadSheetException, SavingSpreadSheetException {
-        TextualInterface.input_commands(null);
+//        TextualInterface.input_commands(null);
         //Commands.input_commands(null);
         //TEST 1
 //        Controller.createEmptySpreadsheet();
@@ -47,6 +47,8 @@ public class Main {
         //Controller.editCell("A2","= A1 + SUMA( A1; SUMA((C1:C5); C1:C5))");//YES
         //Controller.editCell("A2","= SUMA( A1; SUMA((C1:C5); C1:C5; SUMA(); SUMA()))");//YES
         //Controller.editCell("A2","= 1/0"); //SHOULD NOT WORK
+        Controller.loadSpreadsheet("marker_save_test_ref.s2v");
+        TextualInterface.printCells(Controller.getSpreadsheet().cells);
 
         //TEST 1
         //Controller.createEmptySpreadsheet(); //PASS
