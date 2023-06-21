@@ -262,7 +262,7 @@ public class ControllerSpreadsheet {
 
 
 
-    public static void editCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String input) throws ContentException { //WORKING
+    public static void editCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String input) throws ContentException, CircularDependencyException { //WORKING
         try {
             String inputType = getContentType(input);
             String formulaBody = input.substring(1);
@@ -347,6 +347,10 @@ public class ControllerSpreadsheet {
                 default:
                     System.out.println("No concrete content factory method for " + inputType);
             }
+        } catch (ContentException e) {
+            throw new ContentException("Error Edit Cell: " + e.getMessage());
+        } catch (CircularDependencyException e) {
+            throw new CircularDependencyException("Error Edit Cell: " + e.getMessage());
         } catch (Exception e) {
             throw new ContentException("Error Edit Cell: " + e.getMessage());
         }

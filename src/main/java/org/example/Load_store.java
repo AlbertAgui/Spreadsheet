@@ -1,12 +1,13 @@
 package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 
 import java.io.*;
 import java.util.LinkedList;
 
 public class Load_store { // catch (Exception e)
-    static Spreadsheet loadspreadsheet(String FilePath) {
+    static Spreadsheet loadspreadsheet(String FilePath) throws CircularDependencyException, ContentException {
         BufferedReader reader = null;
         try {
             // Set the file
@@ -59,6 +60,10 @@ public class Load_store { // catch (Exception e)
             ControllerSpreadsheet.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
             //add compute cell values all spreadsheet
             return spreadsheet;
+        } catch (CircularDependencyException e) {
+            throw new CircularDependencyException("Error loading spreadsheet: " + e.getMessage());
+        } catch (ContentException e) {
+            throw new ContentException("Error loading spreadsheet: " + e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Error loading spreadsheet: " + e.getMessage());
         } finally {
