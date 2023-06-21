@@ -3,10 +3,7 @@ package org.example.LoadAndSave;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
-import org.example.ControllerSpreadsheet;
-import org.example.Formula;
-import org.example.NumCoordinate;
-import org.example.Spreadsheet;
+import org.example.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -33,14 +30,14 @@ public class LoadFromFile {
                     if (!tokens[i].isEmpty()) {
                         //System.out.println("load: colum: " + nColum + " row: " + nRow + ", token: " + tokens[i]);
                         String input = tokens[i];
-                        String inputType = ControllerSpreadsheet.getContentType(input);
+                        String inputType = ContentTools.getContentType(input);
                         NumCoordinate numCoordinate = new NumCoordinate(nRow, nColum);
                         switch (inputType) {
                             case "Formula":
                                 String formulaBody = input.substring(1);
                                 float newValue = Formula.compute(formulaBody, spreadsheet);
-                                LinkedList<String> new_dependencies = ControllerSpreadsheet.tokenize(formulaBody);
-                                ControllerSpreadsheet.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
+                                LinkedList<String> new_dependencies = ContentTools.tokenize(formulaBody);
+                                ContentTools.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
                                 ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, input, newValue); //CHANGE VALUE
                                 break;
                             case "Text":
@@ -61,7 +58,7 @@ public class LoadFromFile {
                 nRow++;
             }
 
-            if (ControllerSpreadsheet.hasSpreadsheetCircularDependencies(spreadsheet)) {
+            if (ContentTools.hasSpreadsheetCircularDependencies(spreadsheet)) {
                 throw new CircularDependencyException("Circular dependency");
             }
             ControllerSpreadsheet.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
