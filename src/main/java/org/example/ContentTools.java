@@ -50,11 +50,11 @@ public class ContentTools {
 
 
     public static LinkedList<String> getDependencies(String formula_body) throws ContentException {
-        LinkedList<String> tokens = Formula.tokenize(formula_body);
+        LinkedList<String> tokens = Tokenize.tokenize(formula_body);
         LinkedList<String> dependencies = new LinkedList<>();
 
         for (String token : tokens) {
-            if (Formula.is_cell_id(token)) {
+            if (Parsing.is_cell_id(token)) {
                 dependencies.add(token);
             }
         }
