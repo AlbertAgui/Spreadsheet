@@ -2,6 +2,8 @@ package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -445,7 +447,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
 
 
-    public static float evaluate_postfix(Spreadsheet spreadsheet, LinkedList<String> postfix, LinkedList<String> tokens) throws ContentException { //-1 not suported!
+    public static float evaluate_postfix(Spreadsheet spreadsheet, LinkedList<String> postfix, LinkedList<String> tokens) throws ContentException, CircularDependencyException { //-1 not suported!
         Stack<String> aux_stack = new Stack<>();
         try {
             Queue<Integer> functionsNumArgs = getFunctionsNumArgs(tokens);
@@ -525,6 +527,10 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             } else {
                 return Float.parseFloat(next);
             }
+        } catch (BadCoordinateException e) {
+            throw new BadCoordinateException("Evaluate postfix: " + e.getMessage());
+        } catch (ContentException e) {
+            throw new ContentException("Evaluate postfix: " + e.getMessage());
         } catch (Exception e) {
             throw new ContentException("Evaluate postfix: " + e.getMessage());
         }

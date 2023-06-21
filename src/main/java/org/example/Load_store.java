@@ -1,5 +1,6 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 
@@ -64,7 +65,9 @@ public class Load_store { // catch (Exception e)
             throw new CircularDependencyException("Error loading spreadsheet: " + e.getMessage());
         } catch (ContentException e) {
             throw new ContentException("Error loading spreadsheet: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (BadCoordinateException e) {
+            throw new ContentException("Error loading spreadsheet: " + e.getMessage());
+        }catch (Exception e) {
             throw new RuntimeException("Error loading spreadsheet: " + e.getMessage());
         } finally {
             try {

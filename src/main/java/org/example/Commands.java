@@ -1,6 +1,8 @@
 package org.example;
 
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
 
@@ -26,7 +28,7 @@ public class Commands {
         }
     }
 
-    public static String[] E(String userCommand) {
+    public static String[] E(String userCommand) throws ContentException, CircularDependencyException {
         String flag = "edit cell";
         userCommand = removeFirstWord(userCommand);
         String pattern = "([A-Z]+[0-9]+)\\s(.+)";
@@ -69,6 +71,10 @@ public class Commands {
                 }
             } catch (IOException e) {
                 System.out.println("File not found");
+            } catch (ContentException e) {
+                throw new RuntimeException(e);
+            } catch (CircularDependencyException e) {
+                throw new RuntimeException(e);
             }
             return new String[]{flag, filePath};
         } else {
@@ -132,7 +138,13 @@ public class Commands {
             } else if (uc.startsWith("C")) {
                 System.out.println(Arrays.toString(C()));
             } else if (uc.startsWith("E")) {
-                System.out.println(Arrays.toString(E(uc)));
+                try {
+                    System.out.println(Arrays.toString(E(uc)));
+                } catch (ContentException e) {
+                    throw new RuntimeException(e);
+                } catch (CircularDependencyException e) {
+                    throw new RuntimeException(e);
+                }
             } else if (uc.startsWith("L")) {
                 System.out.println(Arrays.toString(L(uc)));
             } else if (uc.startsWith("S")) {

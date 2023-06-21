@@ -14,14 +14,14 @@ import org.example.Content;
 public class Controller implements ISpreadsheetControllerForChecker {
     private static Spreadsheet spreadsheet;
 
-    public static void editCell(String cellId, String input) { //WORKING
+    public static void editCell(String cellId, String input) throws CircularDependencyException, ContentException { //WORKING
         try {
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
             ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
             spreadsheet.cells.printCells();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (CircularDependencyException e) {
+            throw new CircularDependencyException("Error loading spreadsheet: " + e.getMessage());
         }
     }
 

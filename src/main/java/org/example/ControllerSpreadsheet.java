@@ -1,5 +1,6 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 
@@ -347,6 +348,8 @@ public class ControllerSpreadsheet {
                 default:
                     System.out.println("No concrete content factory method for " + inputType);
             }
+        } catch (BadCoordinateException e) {
+                throw new BadCoordinateException("Error Edit Cell: " + e.getMessage());
         } catch (ContentException e) {
             throw new ContentException("Error Edit Cell: " + e.getMessage());
         } catch (CircularDependencyException e) {
