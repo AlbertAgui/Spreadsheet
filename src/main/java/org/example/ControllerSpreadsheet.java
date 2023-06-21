@@ -262,7 +262,7 @@ public class ControllerSpreadsheet {
 
 
 
-    public static void editCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String input) { //WORKING
+    public static void editCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String input) throws ContentException { //WORKING
         try {
             String inputType = getContentType(input);
             String formulaBody = input.substring(1);
@@ -348,17 +348,17 @@ public class ControllerSpreadsheet {
                     System.out.println("No concrete content factory method for " + inputType);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error Edit Cell: " + e.getMessage());
+            throw new ContentException("Error Edit Cell: " + e.getMessage());
         }
     }
 
 
     //UTILS
     //GET CELL
-    public static Cell getCellExisting (Spreadsheet spreadsheet, NumCoordinate numCoordinate) {
+    public static Cell getCellExisting (Spreadsheet spreadsheet, NumCoordinate numCoordinate) throws ContentException {
         Cell cell = spreadsheet.cells.getCell(numCoordinate);
         if (cell == null)
-            throw new RuntimeException("Cell not found: colum: " + numCoordinate.getNumColum() + ", row: " + numCoordinate.getNumRow());
+            throw new ContentException("Cell not found: colum: " + numCoordinate.getNumColum() + ", row: " + numCoordinate.getNumRow());
         return cell;
     }
 

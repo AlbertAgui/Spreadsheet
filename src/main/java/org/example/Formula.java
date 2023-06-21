@@ -1,6 +1,7 @@
 package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -274,11 +275,11 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
 
     //Generate postfix
-    private static Integer get_precedence(String token) {
+    private static Integer get_precedence(String token) throws ContentException {
         if (is_highp_operator(token)) return 2;
         if (is_lowp_operator(token)) return 1;
         if (isColon(token)) return 0;
-        throw new RuntimeException("Get precedence: precedence not found");
+        throw new ContentException("Get precedence: precedence not found");
     }
 
     public static void DisplayPostfix(LinkedList<String> postfix){
@@ -288,7 +289,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         });
     }
 
-    public static LinkedList<String> generate_postfix(LinkedList<String> tokens) {
+    public static LinkedList<String> generate_postfix(LinkedList<String> tokens) throws ContentException {
         LinkedList<String> postfix = new LinkedList<>();
         Stack<String> aux_stack = new Stack<>();
         for (int i = 0; i < tokens.size(); ++i) {
@@ -367,7 +368,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
 
     //Evaluate postfix
-    public static float operationCompute (Spreadsheet spreadsheet, String operator, String l_operand, String r_operand) {
+    public static float operationCompute (Spreadsheet spreadsheet, String operator, String l_operand, String r_operand) throws ContentException {
         float l_op = 0, r_op = 0;
         if(is_cell_id(l_operand)) { //THIS HAPPENS??
             //throw new RuntimeException("Evaluate postfix: operand: " + l_operand + "should be numerical");
@@ -378,7 +379,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             if (content instanceof ContentFormula) {
                 value = ((ContentFormula) content).getValue();
             } else if (content instanceof ContentText) {
-                throw new RuntimeException("Cell content text is a formula cell dependency!");
+                throw new ContentException("Cell content text is a formula cell dependency!");
             } else if (content instanceof ContentNumerical) {
                 value = ((ContentNumerical) content).getValue();
             }
@@ -397,11 +398,11 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             if (content instanceof ContentFormula) {
                 value = ((ContentFormula) content).getValue();
             } else if (content instanceof ContentText) {
-                throw new RuntimeException("Cell content text is a formula cell dependency!");
+                throw new ContentException("Cell content text is a formula cell dependency!");
             } else if (content instanceof ContentNumerical) {
                 value = ((ContentNumerical) content).getValue();
             }
-            l_op = value;
+            r_op = value;
         } else {
             r_op = Float.parseFloat(r_operand);
             //System.out.println("r_op: " + r_op);
@@ -412,13 +413,13 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             case "-" -> l_op - r_op;
             case "*" -> l_op * r_op;
             case "/" -> l_op / r_op;
-            default -> throw new RuntimeException("Evaluate postfix: operator: " + operator + "not supported"); //error should not be needed
+            default -> throw new ContentException("Evaluate postfix: operator: " + operator + "not supported"); //error should not be needed
         };
         return result;
     }
 
 
-    public static float functionCompute (Spreadsheet spreadsheet, String function, Integer numArgs, Stack<String> aux_stack) {
+    public static float functionCompute (Spreadsheet spreadsheet, String function, Integer numArgs, Stack<String> aux_stack) throws ContentException {
         float result = 0;
         for (int i = 0; i < numArgs; ++i) {
             String next = aux_stack.pop();
@@ -430,7 +431,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 if (content instanceof ContentFormula) {
                     value = ((ContentFormula) content).getValue();
                 } else if (content instanceof ContentText) {
-                    throw new RuntimeException("Cell content text is a formula cell dependency!");
+                    throw new ContentException("Cell content text is a formula cell dependency!");
                 } else if (content instanceof ContentNumerical) {
                     value = ((ContentNumerical) content).getValue();
                 }
@@ -444,7 +445,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
 
 
-    public static float evaluate_postfix(Spreadsheet spreadsheet, LinkedList<String> postfix, LinkedList<String> tokens) { //-1 not suported!
+    public static float evaluate_postfix(Spreadsheet spreadsheet, LinkedList<String> postfix, LinkedList<String> tokens) throws ContentException { //-1 not suported!
         Stack<String> aux_stack = new Stack<>();
         try {
             Queue<Integer> functionsNumArgs = getFunctionsNumArgs(tokens);
@@ -485,8 +486,8 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                     endRow = endCoordinate.getNumRow();
                     startColum = startCoordinate.getNumColum();
                     endColum = endCoordinate.getNumColum();
-                    if(startRow > endRow) throw new RuntimeException("Incorrect rang");
-                    if(startColum > endColum) throw new RuntimeException("Incorrect rang");
+                    if(startRow > endRow) throw new ContentException("Incorrect rang");
+                    if(startColum > endColum) throw new ContentException("Incorrect rang");
                     for (int col = startColum; col <= endColum; ++col) {
                         for (int row = startRow; row <= endRow; ++row) {
                             NumCoordinate localCoordinate = new NumCoordinate(row, col);
@@ -496,7 +497,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                             if (content instanceof ContentFormula) {
                                 value = ((ContentFormula) content).getValue();
                             } else if (content instanceof ContentText) {
-                                throw new RuntimeException("Cell content text is a formula cell dependency!");
+                                throw new ContentException("Cell content text is a formula cell dependency!");
                             } else if (content instanceof ContentNumerical) {
                                 value = ((ContentNumerical) content).getValue();
                             }
@@ -514,7 +515,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 if (content instanceof ContentFormula) {
                     value = ((ContentFormula) content).getValue();
                 } else if (content instanceof ContentText) {
-                    throw new RuntimeException("Cell content text is a formula cell dependency!");
+                    throw new ContentException("Cell content text is a formula cell dependency!");
                 } else if (content instanceof ContentNumerical) {
                     value = ((ContentNumerical) content).getValue();
                 }
@@ -523,7 +524,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 return Float.parseFloat(next);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Evaluate postfix: " + e.getMessage());
+            throw new ContentException("Evaluate postfix: " + e.getMessage());
         }
     }
 
@@ -533,7 +534,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         try {
             LinkedList<String> tokens = tokenize(formula_body);
             if (!is_parseable(tokens)) {
-                throw new RuntimeException("No parseable tokens");
+                throw new ContentException("No parseable tokens");
             }
             LinkedList<String> postfix = generate_postfix(tokens);
             value = evaluate_postfix(spreadsheet, postfix, tokens);
@@ -541,7 +542,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             if (e instanceof ContentException) {
                 throw new ContentException("Compute: " + e.getMessage());
             } else {
-                throw new RuntimeException("Compute: " + e.getMessage());
+                throw new ContentException("Compute: " + e.getMessage());
             }
         }
         return value;

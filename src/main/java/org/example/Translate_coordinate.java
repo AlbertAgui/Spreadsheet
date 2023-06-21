@@ -1,5 +1,7 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,8 +35,7 @@ public class Translate_coordinate {
             return numCoordinate;
         }
         else {
-            System.out.println("Incorrect cell format" + "s_coordinate");
-            return null;
+            throw new BadCoordinateException("Incorrect cell format" + "s_coordinate");
         }
     }
 }

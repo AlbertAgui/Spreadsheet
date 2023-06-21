@@ -19,7 +19,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
             ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
-//            spreadsheet.cells.printCells();
+            spreadsheet.cells.printCells();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -29,21 +29,23 @@ public class Controller implements ISpreadsheetControllerForChecker {
         spreadsheet = new Spreadsheet();
     }
 
-    public static void loadSpreadsheet(String path) {
+    public static void loadSpreadsheet(String path) throws ReadingSpreadSheetException {
         try {
             spreadsheet = Load_store.loadspreadsheet(path);
-//            spreadsheet.cells.printCells();
+            spreadsheet.cells.printCells();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            throw new ReadingSpreadSheetException();
         }
     }
 
-    public static void storeSpreadsheet(String path) {
+    public static void storeSpreadsheet(String path) throws SavingSpreadSheetException {
         try {
             Load_store.storespreadsheet(path, spreadsheet);
-//            spreadsheet.cells.printCells();
+            spreadsheet.cells.printCells();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            throw new SavingSpreadSheetException();
         }
     }
 
