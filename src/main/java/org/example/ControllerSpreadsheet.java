@@ -20,7 +20,10 @@ public class ControllerSpreadsheet {
             "([A-Z]+)(\\d+)",
             "\\:",
             "\\;",
-            "SUMA" //function
+            "SUMA",
+            "MIN",
+            "MAX",
+            "PROMEDIO"//function
     ));
 
     public static LinkedList<String> tokenize(String formula_body) throws ContentException {
