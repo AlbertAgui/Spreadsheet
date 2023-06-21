@@ -18,7 +18,10 @@ public class ContentTools {
             "([A-Z]+)(\\d+)",
             "\\:",
             "\\;",
-            "SUMA" //function
+            "SUMA",
+            "MIN",
+            "MAX",
+            "PROMEDIO" //function
     ));
     private static String textPattern = "^(?!=).*$";
     private static String formulaPattern = "^=.*$";
