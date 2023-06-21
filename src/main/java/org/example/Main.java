@@ -4,7 +4,7 @@ package org.example;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-        Commands.input_commands(null);
+//        Commands.input_commands(null);
 //        Controller.loadSpreadsheet("Data/t1.txt");
         //Controller.createEmptySpreadsheet();
         //TEST1
@@ -50,5 +50,10 @@ public class Main {
         //TEST4
 //        Controller.editCell("A1","=A2+3+ADD(3;4)5");
 //        Controller.storeSpreadsheet("Data/t2wr.txt");
+//        TEST5
+        Controller.createEmptySpreadsheet();
+        Controller.editCell("A1","=A2+A3+A4+A5");
+        Controller.editCell("A2","=A6+A7+A8");
+        Controller.editCell("A6","=A1+5");
     }
 }
