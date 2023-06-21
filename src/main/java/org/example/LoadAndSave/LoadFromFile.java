@@ -37,7 +37,7 @@ public class LoadFromFile {
                                 String inputFormula = input.replace(',',';');
                                 String formulaBody = inputFormula.substring(1);
                                 float newValue = Formula.compute(formulaBody, spreadsheet);
-                                LinkedList<String> new_dependencies = ContentTools.tokenize(formulaBody);
+                                LinkedList<String> new_dependencies = ContentTools.getDependencies(formulaBody);
                                 ContentTools.updateDependencies(spreadsheet, numCoordinate, new LinkedList<>(), new_dependencies);
                                 ControllerSpreadsheet.updateFormula(spreadsheet, numCoordinate, formulaBody, newValue); //CHANGE VALUE
                                 break;

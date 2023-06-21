@@ -9,7 +9,6 @@ import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetExce
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
 import org.example.LoadAndSave.LoadFromFile;
 import org.example.LoadAndSave.SaveToFile;
-import org.example.TUI.TextualInterface;
 
 
 public class Controller implements ISpreadsheetControllerForChecker {
@@ -18,7 +17,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
     public static void editCell(String cellId, String input) throws CircularDependencyException, ContentException { //WORKING
         try {
             NumCoordinate numCoordinate;
-            numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
+            numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(cellId);
             ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
 //            spreadsheet.cells.printCells();
         } catch (CircularDependencyException e) {
@@ -58,7 +57,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     @Override
     public double getCellContentAsDouble(String coord) throws BadCoordinateException, NoNumberException {
-       NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
+       NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(coord);
        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
        Content content = cell.getContent();
         double value = (double) 0;
@@ -74,13 +73,13 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     @Override
     public String getCellContentAsString(String cooord) throws BadCoordinateException {
-        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(cooord);
+        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(cooord);
         return ((ContentText)spreadsheet.cells.getCell(numCoordinate).getContent()).getValue();
     }
 
     @Override
     public String getCellFormulaExpression(String coord) throws BadCoordinateException {
-        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
+        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(coord);
         return ((ContentFormula)spreadsheet.cells.getCell(numCoordinate).getContent()).getWrittenData();
 //        ContentFormula content = spreadsheet.cells.getCell(numCoordinate).getContent();
 //        ((ContentFormula) content).getWrittenData();

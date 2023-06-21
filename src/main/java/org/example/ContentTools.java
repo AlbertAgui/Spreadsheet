@@ -47,30 +47,18 @@ public class ContentTools {
         System.out.println("Error content type unsupported" + formula_body);
         return formula_body;
     }
-    public static LinkedList<String> tokenize(String formula_body) throws ContentException {
-        LinkedList<String> tokens = new LinkedList<>();
-        String expectedToken = TokenMatchInfos.get(6);
-        while(!formula_body.isEmpty()) {
-            Boolean found = false;
-            for(String tokeninfo : TokenMatchInfos) {
-                //find only if are at start of string! take into account if future strings are a subset of others at start!!
-                Pattern p = Pattern.compile('^'+tokeninfo);
-                Matcher m = p.matcher(formula_body);
-                if (m.find()) {
-                    found = true;
-                    String token = m.group(0);
-                    //System.out.println("tokencomp: \"" + token + "\"");
-                    if (token.matches(expectedToken)) { //cell id
-                        tokens.add(token);
-                    }
-                    formula_body = m.replaceFirst("");
-                }
-            }
-            if (!found) {
-                throw new ContentException("Tokenize: Invalid token: \"" + formula_body + "\"");
+
+
+    public static LinkedList<String> getDependencies(String formula_body) throws ContentException {
+        LinkedList<String> tokens = Formula.tokenize(formula_body);
+        LinkedList<String> dependencies = new LinkedList<>();
+
+        for (String token : tokens) {
+            if (Formula.is_cell_id(token)) {
+                dependencies.add(token);
             }
         }
-        return tokens;
+        return dependencies;
     }
 
     private static LinkedList<String> findDistinctElements(LinkedList<String> list1, LinkedList<String> list2) {
@@ -101,7 +89,7 @@ public class ContentTools {
 
         for (String element : add_dependencies) { //OJO
             NumCoordinate numCoordinate;
-            numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
+            numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(element);
             Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.addDependant(coordinate);
@@ -111,7 +99,7 @@ public class ContentTools {
 
         for (String element : erase_dependencies) {
             NumCoordinate numCoordinate;
-            numCoordinate = Translate_coordinate.translate_coordinate_to_int(element);
+            numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(element);
             Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.eraseDependant(coordinate);

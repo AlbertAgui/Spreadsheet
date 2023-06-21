@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Translate_coordinate {
-    public static NumCoordinate translate_coordinate_to_int(String s_coordinate) {
+    public static NumCoordinate translateCellIdToCoordinateTo(String s_coordinate) {
         String pattern = "^([A-Z]+)(\\d+)$";
 
         Pattern regexPattern = Pattern.compile(pattern);

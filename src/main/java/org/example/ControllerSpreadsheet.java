@@ -5,8 +5,6 @@ import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ControllerSpreadsheet {
 
@@ -51,13 +49,13 @@ public class ControllerSpreadsheet {
         Content content = cell.getContent();
         if(content instanceof ContentFormula) {
             String body = ((ContentFormula) content).getWrittenData();
-            LinkedList <String> dependencies = ContentTools.tokenize(body);
+            LinkedList <String> dependencies = ContentTools.getDependencies(body);
             if(dependencies.isEmpty()) {
                 stack.add(numCoordinate);
             } else {
                 for (String dependency : dependencies) {
                     NumCoordinate coordinate;
-                    coordinate = Translate_coordinate.translate_coordinate_to_int(dependency);
+                    coordinate = Translate_coordinate.translateCellIdToCoordinateTo(dependency);
                     if(!visited.contains(coordinate)) {
                         recomputeCell(spreadsheet, coordinate, stack, visited);
                     }
@@ -101,13 +99,13 @@ public class ControllerSpreadsheet {
                 case "Formula":
                     old_cell = getCellNull(spreadsheet, numCoordinate);
                     newValue = Formula.compute(formulaBody, spreadsheet);
-                    new_dependencies = ContentTools.tokenize(formulaBody);
+                    new_dependencies = ContentTools.getDependencies(formulaBody);
                     if (old_cell != null) {
                         old_content = old_cell.getContent();
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.substring(1);
-                            old_dependencies = ContentTools.tokenize(old_body);
+                            old_dependencies = ContentTools.getDependencies(old_body);
                         } else {
                             old_dependencies = new LinkedList<>();
                         }
@@ -141,7 +139,7 @@ public class ControllerSpreadsheet {
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.substring(1);
-                            old_dependencies = ContentTools.tokenize(old_body);
+                            old_dependencies = ContentTools.getDependencies(old_body);
                             new_dependencies = new LinkedList<>();
                             ContentTools.updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
                         }
@@ -158,7 +156,7 @@ public class ControllerSpreadsheet {
                         if (old_content instanceof ContentFormula) {
                             String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
                             String old_body = old_writtencontent.substring(1);
-                            old_dependencies = ContentTools.tokenize(old_body);
+                            old_dependencies = ContentTools.getDependencies(old_body);
                             new_dependencies = new LinkedList<>();
                             ContentTools.updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
                         }

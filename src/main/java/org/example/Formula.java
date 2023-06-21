@@ -1,7 +1,6 @@
 package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
-import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 
@@ -362,8 +361,8 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 String down, top;
                 top = tokens.get(i+1);
                 down = tokens.get(i-1);
-                NumCoordinate endCoordinate = Translate_coordinate.translate_coordinate_to_int(top);
-                NumCoordinate startCoordinate = Translate_coordinate.translate_coordinate_to_int(down);
+                NumCoordinate endCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(top);
+                NumCoordinate startCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(down);
                 int startRow, endRow, startColum, endColum;
                 startRow = startCoordinate.getNumRow();
                 endRow = endCoordinate.getNumRow();
@@ -385,7 +384,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         float l_op = 0, r_op = 0;
         if(is_cell_id(l_operand)) { //THIS HAPPENS??
             //throw new RuntimeException("Evaluate postfix: operand: " + l_operand + "should be numerical");
-            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(l_operand);
+            NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(l_operand);
             Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
             Content content = cell.getContent();
             Float value = (float) 0;
@@ -404,7 +403,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
 
         if(is_cell_id(r_operand)) {
             //throw new RuntimeException("Evaluate postfix: operand: " + r_operand + "should be numerical");
-            NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(r_operand);
+            NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(r_operand);
             Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
             Content content = cell.getContent();
             Float value = (float) 0;
@@ -440,7 +439,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 for (int i = 0; i < numArgs; ++i) {
                     next = aux_stack.pop();
                     if (is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
                         Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         Float value = (float) 0;
@@ -462,7 +461,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 float localValue = 0;
                 next = aux_stack.pop();
                 if (is_cell_id(next)) {
-                    NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                    NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
                     Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                     Content content = cell.getContent();
 
@@ -480,7 +479,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 for (int i = 1; i < numArgs; ++i) {
                     next = aux_stack.pop();
                     if (is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
                         Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         if (content instanceof ContentFormula) {
@@ -505,7 +504,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 float localValue = 0;
                 next = aux_stack.pop();
                 if (is_cell_id(next)) {
-                    NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                    NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
                     Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                     Content content = cell.getContent();
 
@@ -523,7 +522,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 for (int i = 1; i < numArgs; ++i) {
                     next = aux_stack.pop();
                     if (is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
                         Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         if (content instanceof ContentFormula) {
@@ -547,7 +546,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                 for (int i = 0; i < numArgs; ++i) {
                     next = aux_stack.pop();
                     if (is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
                         Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         Float value = (float) 0;
@@ -592,8 +591,8 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
                     String down, top;
                     top = aux_stack.pop();
                     down = aux_stack.pop();
-                    NumCoordinate endCoordinate = Translate_coordinate.translate_coordinate_to_int(top);
-                    NumCoordinate startCoordinate = Translate_coordinate.translate_coordinate_to_int(down);
+                    NumCoordinate endCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(top);
+                    NumCoordinate startCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(down);
                     Integer startRow, endRow, startColum, endColum;
                     startRow = startCoordinate.getNumRow();
                     endRow = endCoordinate.getNumRow();
@@ -621,7 +620,7 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
             }
             String next = aux_stack.pop();
             if (is_cell_id(next)) {
-                NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(next);
+                NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
                 Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                 Content content = cell.getContent();
                 Float value = (float) 0;
