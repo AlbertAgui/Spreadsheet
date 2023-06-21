@@ -18,27 +18,11 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
         });
     }
 
-    public static final List<String> TokenMatchInfos = new ArrayList<>(Arrays.asList( //static="class instance, unique", final="static, constant"
-            "\s",//is this needed?
-            "[+-]",
-            "[*/]",
-            "\\(",
-            "\\)",
-            "[-+]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?",//093 will be supported... is it fine?
-            "([A-Z]+)(\\d+)",
-            "\\:",
-            "\\;",
-            "SUMA",
-            "MIN",
-            "MAX",
-            "PROMEDIO"//function
-    ));
-
     public static LinkedList<String> tokenize(String formula_body) throws ContentException {
         LinkedList<String> tokens = new LinkedList<>();
         while(!formula_body.isEmpty()) {
             Boolean found = false;
-            for(String tokeninfo : TokenMatchInfos) {
+            for(String tokeninfo : ContentTools.TokenMatchInfos) {
                 //find only if are at start of string! take into account if future strings are a subset of others at start!!
                 Pattern p = Pattern.compile('^'+tokeninfo);
                 Matcher m = p.matcher(formula_body);
@@ -70,15 +54,15 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static Boolean is_cell_id(String token){
-        return token.matches(TokenMatchInfos.get(6));
+        return token.matches(ContentTools.TokenMatchInfos.get(6));
     }
 
     public static Boolean is_number(String token){
-        return token.matches(TokenMatchInfos.get(5));
+        return token.matches(ContentTools.TokenMatchInfos.get(5));
     }
 
     public static Boolean is_function(String token) {
-        return token.matches(TokenMatchInfos.get(9)) || token.matches(TokenMatchInfos.get(10)) || token.matches(TokenMatchInfos.get(11)) || token.matches(TokenMatchInfos.get(12));
+        return token.matches(ContentTools.TokenMatchInfos.get(9)) || token.matches(ContentTools.TokenMatchInfos.get(10)) || token.matches(ContentTools.TokenMatchInfos.get(11)) || token.matches(ContentTools.TokenMatchInfos.get(12));
     }
 
     public static Boolean is_operator(String token){
@@ -86,11 +70,11 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static Boolean is_lowp_operator(String token){
-        return token.matches(TokenMatchInfos.get(1));
+        return token.matches(ContentTools.TokenMatchInfos.get(1));
     }
 
     public static Boolean is_highp_operator(String token){
-        return token.matches(TokenMatchInfos.get(2));
+        return token.matches(ContentTools.TokenMatchInfos.get(2));
     }
 
     private static Boolean is_claw(String token) {
@@ -98,25 +82,25 @@ public class Formula { //1 + 2-4 //The preference in order used to find could be
     }
 
     public static Boolean is_open_claw(String token){
-        if(token.matches(TokenMatchInfos.get(3))){
+        if(token.matches(ContentTools.TokenMatchInfos.get(3))){
             return true;
         }
         return false;
     }
 
     public static Boolean is_closed_claw(String token){
-        if(token.matches(TokenMatchInfos.get(4))){
+        if(token.matches(ContentTools.TokenMatchInfos.get(4))){
             return true;
         }
         return false;
     }
 
     public static Boolean isColon(String token){
-        return token.matches(TokenMatchInfos.get(7));
+        return token.matches(ContentTools.TokenMatchInfos.get(7));
     }
 
     public static Boolean isSemicolon(String token){
-        return token.matches(TokenMatchInfos.get(8));
+        return token.matches(ContentTools.TokenMatchInfos.get(8));
     }
 
     public static Boolean is_parseable(LinkedList<String> tokens) {
