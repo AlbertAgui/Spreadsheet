@@ -1,12 +1,11 @@
-package org.example;
+package org.example.Formula;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
-import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
+import org.example.*;
+import org.example.Spreadsheet;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Formula { //1 + 2-4 //The preference in order used to find could be parametrized
     //Tokenizer

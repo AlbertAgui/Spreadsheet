@@ -6,6 +6,10 @@ import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
 import org.example.*;
+import org.example.ContentPackage.Content;
+import org.example.ContentPackage.ContentFormula;
+import org.example.ContentPackage.ContentNumerical;
+import org.example.ContentPackage.ContentText;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -137,7 +141,6 @@ public class TextualInterface {
     public static String[] L(String userCommand) throws ReadingSpreadSheetException {
         userCommand = removeFirstWord(userCommand);
         String flag = "Load";
-//        String pattern = "^([a-zA-Z]:)?(/[a-zA-Z0-9_.-]+)+/?$";
         String pattern = "[\\w\\d]+\\/[^\\/]+\\.[\\w\\d]+";
         Matcher matcher = Pattern.compile(pattern).matcher(userCommand);
         if (matcher.matches()) {
@@ -155,7 +158,6 @@ public class TextualInterface {
     public static String[] S(String userCommand) throws SavingSpreadSheetException {
         userCommand = removeFirstWord(userCommand);
         String flag = "Save";
-//        String pattern = "^([a-zA-Z]:)?(/[a-zA-Z0-9_.-]+)+/?$";
         String pattern = "[\\w\\d]+\\/[^\\/]+\\.[\\w\\d]+";
         Matcher matcher = Pattern.compile(pattern).matcher(userCommand);
         if (matcher.matches()) {

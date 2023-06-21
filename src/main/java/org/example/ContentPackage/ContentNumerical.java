@@ -1,0 +1,7 @@
+package org.example.ContentPackage;
+
+import org.example.ContentPackage.Content;
+
+public class ContentNumerical extends Content<Float> {
+
+}

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.ContentPackage;
 
 public class Content<T> {
     private T value;

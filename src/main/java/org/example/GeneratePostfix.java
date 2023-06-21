@@ -1,6 +1,7 @@
 package org.example;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+import org.example.Formula.Parsing;
 
 import java.util.LinkedList;
 import java.util.Stack;

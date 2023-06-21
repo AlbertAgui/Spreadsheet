@@ -7,6 +7,10 @@ import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ISpreadsheetControllerForChecker;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
+import org.example.ContentPackage.Content;
+import org.example.ContentPackage.ContentFormula;
+import org.example.ContentPackage.ContentNumerical;
+import org.example.ContentPackage.ContentText;
 import org.example.LoadAndSave.LoadFromFile;
 import org.example.LoadAndSave.SaveToFile;
 
@@ -18,7 +22,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
         try {
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(cellId);
-            ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
+            SpreadsheetManager.editCell(spreadsheet, numCoordinate, input);
 //            spreadsheet.cells.printCells();
         } catch (CircularDependencyException e) {
             throw new CircularDependencyException("Error loading spreadsheet: " + e.getMessage());
@@ -58,7 +62,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
     @Override
     public double getCellContentAsDouble(String coord) throws BadCoordinateException, NoNumberException {
        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(coord);
-       Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+       Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate);
        Content content = cell.getContent();
         double value = (double) 0;
         if (content instanceof ContentText) {

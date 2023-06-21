@@ -1,4 +1,6 @@
-package org.example;
+package org.example.Formula;
+
+import org.example.ContentPackage.ContentTools;
 
 import java.util.LinkedList;
 import java.util.Stack;

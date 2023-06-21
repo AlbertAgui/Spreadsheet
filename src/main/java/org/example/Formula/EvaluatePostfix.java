@@ -1,8 +1,14 @@
-package org.example;
+package org.example.Formula;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+import org.example.*;
+import org.example.ContentPackage.Content;
+import org.example.ContentPackage.ContentFormula;
+import org.example.ContentPackage.ContentNumerical;
+import org.example.ContentPackage.ContentText;
+import org.example.Spreadsheet;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -61,7 +67,7 @@ public class EvaluatePostfix {
         if(Parsing.is_cell_id(l_operand)) { //THIS HAPPENS??
             //throw new RuntimeException("Evaluate postfix: operand: " + l_operand + "should be numerical");
             NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(l_operand);
-            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+            Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
             Content content = cell.getContent();
             Float value = (float) 0;
             if (content instanceof ContentFormula) {
@@ -80,7 +86,7 @@ public class EvaluatePostfix {
         if(Parsing.is_cell_id(r_operand)) {
             //throw new RuntimeException("Evaluate postfix: operand: " + r_operand + "should be numerical");
             NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(r_operand);
-            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+            Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
             Content content = cell.getContent();
             Float value = (float) 0;
             if (content instanceof ContentFormula) {
@@ -116,7 +122,7 @@ public class EvaluatePostfix {
                     next = aux_stack.pop();
                     if (Parsing.is_cell_id(next)) {
                         NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         Float value = (float) 0;
                         if (content instanceof ContentFormula) {
@@ -138,7 +144,7 @@ public class EvaluatePostfix {
                 next = aux_stack.pop();
                 if (Parsing.is_cell_id(next)) {
                     NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                    Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                    Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                     Content content = cell.getContent();
 
                     if (content instanceof ContentFormula) {
@@ -156,7 +162,7 @@ public class EvaluatePostfix {
                     next = aux_stack.pop();
                     if (Parsing.is_cell_id(next)) {
                         NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         if (content instanceof ContentFormula) {
                             localValue = ((ContentFormula) content).getValue();
@@ -181,7 +187,7 @@ public class EvaluatePostfix {
                 next = aux_stack.pop();
                 if (Parsing.is_cell_id(next)) {
                     NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                    Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                    Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                     Content content = cell.getContent();
 
                     if (content instanceof ContentFormula) {
@@ -199,7 +205,7 @@ public class EvaluatePostfix {
                     next = aux_stack.pop();
                     if (Parsing.is_cell_id(next)) {
                         NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         if (content instanceof ContentFormula) {
                             localValue = ((ContentFormula) content).getValue();
@@ -223,7 +229,7 @@ public class EvaluatePostfix {
                     next = aux_stack.pop();
                     if (Parsing.is_cell_id(next)) {
                         NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                         Content content = cell.getContent();
                         Float value = (float) 0;
                         if (content instanceof ContentFormula) {
@@ -279,7 +285,7 @@ public class EvaluatePostfix {
                     for (int col = startColum; col <= endColum; ++col) {
                         for (int row = startRow; row <= endRow; ++row) {
                             NumCoordinate localCoordinate = new NumCoordinate(row, col);
-                            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, localCoordinate); //To get 0 from empty cells
+                            Cell cell = SpreadsheetManager.getCellAny(spreadsheet, localCoordinate); //To get 0 from empty cells
                             Content content = cell.getContent();
                             Float value = (float) 0;
                             if (content instanceof ContentFormula) {
@@ -297,7 +303,7 @@ public class EvaluatePostfix {
             String next = aux_stack.pop();
             if (Parsing.is_cell_id(next)) {
                 NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
+                Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                 Content content = cell.getContent();
                 Float value = (float) 0;
                 if (content instanceof ContentFormula) {

@@ -1,6 +1,11 @@
 package org.example.LoadAndSave;
 
 import org.example.*;
+import org.example.ContentPackage.Content;
+import org.example.ContentPackage.ContentFormula;
+import org.example.ContentPackage.ContentNumerical;
+import org.example.ContentPackage.ContentText;
+import org.example.Spreadsheet;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,7 +40,7 @@ public class SaveToFile {
                         writer.write(";");
                     }
 
-                    Cell cell = ControllerSpreadsheet.getCellNull(spreadsheet, new NumCoordinate(i, j));
+                    Cell cell = SpreadsheetManager.getCellNull(spreadsheet, new NumCoordinate(i, j));
                     if (cell != null) {
                         Content content = cell.getContent();
                         //Different kinds of cells, add inheritance!

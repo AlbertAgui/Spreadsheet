@@ -3,10 +3,12 @@ package org.example;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
+import org.example.ContentPackage.*;
+import org.example.Formula.Formula;
 
 import java.util.*;
 
-public class ControllerSpreadsheet {
+public class SpreadsheetManager {
 
     public static void updateFormula(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String writtenContent, float value){
         Cell cell = getCellAny(spreadsheet, numCoordinate);
@@ -45,7 +47,7 @@ public class ControllerSpreadsheet {
 
     private static void recomputeCell(Spreadsheet spreadsheet, NumCoordinate numCoordinate, Queue<NumCoordinate> stack, Set<NumCoordinate> visited) throws ContentException {
         visited.add(numCoordinate);
-        Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
+        Cell cell = SpreadsheetManager.getCellExisting(spreadsheet,numCoordinate);
         Content content = cell.getContent();
         if(content instanceof ContentFormula) {
             String body = ((ContentFormula) content).getWrittenData();
@@ -76,7 +78,7 @@ public class ControllerSpreadsheet {
                 recomputeCell(spreadsheet, coordinate, queue, visited);
                 while(!queue.isEmpty()) {
                     NumCoordinate numCoordinate = queue.remove();
-                    Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet, numCoordinate);
+                    Cell cell = SpreadsheetManager.getCellExisting(spreadsheet, numCoordinate);
                     String writtenData = ((ContentFormula)cell.getContent()).getWrittenData(); //SHOULD BE FORMULA
                     Float value = Formula.compute(writtenData, spreadsheet);
                     updateFormula(spreadsheet, numCoordinate, writtenData, value);

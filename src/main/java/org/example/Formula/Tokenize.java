@@ -1,6 +1,7 @@
-package org.example;
+package org.example.Formula;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
+import org.example.ContentPackage.ContentTools;
 
 import java.util.LinkedList;
 import java.util.regex.Matcher;
