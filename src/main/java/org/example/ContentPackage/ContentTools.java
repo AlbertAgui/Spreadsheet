@@ -1,4 +1,6 @@
-package org.example;
+package org.example.ContentPackage;
+import org.example.*;
+import org.example.Formula.*;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 
@@ -9,7 +11,7 @@ import java.util.regex.Pattern;
 public class ContentTools {
 
     public static void updateFormula(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String writtenContent, float value){
-        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate);
         Content new_content = cell.getContent();
         if (!(new_content instanceof ContentFormula)) {
             new_content = new ContentFormula();
@@ -21,7 +23,7 @@ public class ContentTools {
     }
 
     public static void updateText(Spreadsheet spreadsheet, NumCoordinate numCoordinate, String value){
-        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate);
         Content new_content = cell.getContent();
         if (!(new_content instanceof ContentText)) {
             new_content = new ContentText();
@@ -32,7 +34,7 @@ public class ContentTools {
     }
 
     public static void updateNumerical(Spreadsheet spreadsheet, NumCoordinate numCoordinate, float value){
-        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet, numCoordinate);
+        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate);
         Content new_content = cell.getContent();
         if (!(new_content instanceof ContentNumerical)) {
             new_content = new ContentNumerical();
@@ -131,7 +133,7 @@ public class ContentTools {
         for (String element : add_dependencies) { //OJO
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(element);
-            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
+            Cell cell = SpreadsheetManager.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.addDependant(coordinate);
             cell.setDependants(dependants);
@@ -141,7 +143,7 @@ public class ContentTools {
         for (String element : erase_dependencies) {
             NumCoordinate numCoordinate;
             numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(element);
-            Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
+            Cell cell = SpreadsheetManager.getCellAny(spreadsheet,numCoordinate); //ANY, CAN BE ADDED FOR THE FIRST TIME!
             Dependants dependants = cell.getDependants();
             dependants.eraseDependant(coordinate);
             if(dependants.getDependants().size() == 0) {//ERASE CELL IF NEEDED
@@ -162,7 +164,7 @@ public class ContentTools {
         localVisited.add(numCoordinate);
         globalVisited.add(numCoordinate);
 
-        Cell cell = ControllerSpreadsheet.getCellAny(spreadsheet,numCoordinate); //ANY BECAUSE CELLS CAN BE NEW!
+        Cell cell = SpreadsheetManager.getCellAny(spreadsheet,numCoordinate); //ANY BECAUSE CELLS CAN BE NEW!
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for (NumCoordinate dependant : dependants) {
             if (!globalVisited.contains(dependant)){
@@ -195,10 +197,10 @@ public class ContentTools {
 
     //Prerequisite don't recompute if circular dependency
     public static void recomputeCellDependants(Spreadsheet spreadsheet, NumCoordinate numCoordinate) throws ContentException {
-        Cell cell = ControllerSpreadsheet.getCellExisting(spreadsheet,numCoordinate);
+        Cell cell = SpreadsheetManager.getCellExisting(spreadsheet,numCoordinate);
         Set<NumCoordinate> dependants = cell.getDependants().getDependants();
         for(NumCoordinate dependant : dependants){
-            Cell cellDependant = ControllerSpreadsheet.getCellExisting(spreadsheet,dependant);
+            Cell cellDependant = SpreadsheetManager.getCellExisting(spreadsheet,dependant);
             String writtenData = ((ContentFormula)cellDependant.getContent()).getWrittenData(); //SHOULD BE FORMULA
             Float value = Formula.compute(writtenData, spreadsheet);
             updateFormula(spreadsheet, dependant, writtenData, value);

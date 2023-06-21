@@ -1,4 +1,6 @@
 package org.example.LoadAndSave;
+import org.example.ContentPackage.*;
+import org.example.Formula.*;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
@@ -62,7 +64,7 @@ public class LoadFromFile {
             if (ContentTools.hasSpreadsheetCircularDependencies(spreadsheet)) {
                 throw new CircularDependencyException("Circular dependency");
             }
-            ControllerSpreadsheet.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
+            SpreadsheetManager.recomputeSpreadsheet(spreadsheet); //NEED ERROR CONTROLL?
             //add compute cell values all spreadsheet
             return spreadsheet;
         } catch (CircularDependencyException e) {

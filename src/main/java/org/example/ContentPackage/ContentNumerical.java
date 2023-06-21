@@ -1,7 +1,13 @@
 package org.example.ContentPackage;
 
-import org.example.ContentPackage.Content;
-
 public class ContentNumerical extends Content<Float> {
+    @Override
+    public String getContentText() {
+        return Float.toString(super.getValue());
+    }
 
+    @Override
+    public float getContentNumber() {
+        return super.getValue();
+    }
 }
