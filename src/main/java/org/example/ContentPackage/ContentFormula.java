@@ -15,7 +15,9 @@ public class ContentFormula extends Content<Float> {
 
     @Override
     public String getContentText() {
-        return getWrittenData();
+        String contentText = '=' + getWrittenData();
+        contentText = contentText.replace(';',',');
+        return contentText;
     }
 
     @Override

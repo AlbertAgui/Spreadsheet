@@ -44,22 +44,8 @@ public class SaveToFile {
                     if (cell != null) {
                         Content content = cell.getContent();
                         //Different kinds of cells, add inheritance!
-                        if (content instanceof ContentFormula) {
-                            String formula = ((ContentFormula) content).getWrittenData().replace(';',',');
-                            formula = formula.replace(';',',');
-                            formula = '=' + formula;
-                            writer.write(formula);
-                        } else if (content instanceof ContentText) {
-                            writer.write(((ContentText) content).getValue());
-                        } else if (content instanceof ContentNumerical) {
-                            double value = ((ContentNumerical) content).getValue();
-                            if (value % 1 == 0) {  // Check if the value is an integer
-                                writer.write(Integer.toString((int) value));  // Write integer value without decimal point
-                            } else {
-                                writer.write(Double.toString(value));  // Write decimal value with decimal point
-                            }
-                            // writer.write(Float.toString(((ContentNumerical) content).getValue()));
-                        }
+                        String contentText = content.getContentText();
+                        writer.write(contentText);
                     }
                 }
                 //Do not add a newline at the last line
@@ -67,7 +53,6 @@ public class SaveToFile {
                     writer.newLine();
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Error storing spreadsheet: " + e.getMessage());
         } finally {
