@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Formula;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import org.example.Formula.Parsing;

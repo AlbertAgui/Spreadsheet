@@ -8,6 +8,10 @@ import org.example.ContentPackage.Content;
 import org.example.ContentPackage.ContentFormula;
 import org.example.ContentPackage.ContentNumerical;
 import org.example.ContentPackage.ContentText;
+import org.example.Formula.Functions.MAX;
+import org.example.Formula.Functions.MIN;
+import org.example.Formula.Functions.PROMEDIO;
+import org.example.Formula.Functions.SUMA;
 import org.example.Spreadsheet;
 
 import java.util.LinkedList;
@@ -113,144 +117,29 @@ public class EvaluatePostfix {
     }
 
 
-    public static float functionCompute (Spreadsheet spreadsheet, String function, Integer numArgs, Stack<String> aux_stack) throws ContentException {
+
+    public static float functionCompute(Spreadsheet spreadsheet, String function, int numArgs, Stack<String> aux_stack) throws ContentException {
         float result = 0;
-        String next;
+
         switch (function) {
-            case ("SUMA") -> {
-                for (int i = 0; i < numArgs; ++i) {
-                    next = aux_stack.pop();
-                    if (Parsing.is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
-                        Content content = cell.getContent();
-                        Float value = (float) 0;
-                        if (content instanceof ContentFormula) {
-                            value = ((ContentFormula) content).getValue();
-                        } else if (content instanceof ContentText) {
-                            throw new ContentException("Cell content text is a formula cell dependency!");
-                        } else if (content instanceof ContentNumerical) {
-                            value = ((ContentNumerical) content).getValue();
-                        }
-                        result += value;
-                    } else {
-                        result += Float.parseFloat(next);
-                    }
-                }
-            }
-            case ("MIN") -> {
-                float minValue = 0;
-                float localValue = 0;
-                next = aux_stack.pop();
-                if (Parsing.is_cell_id(next)) {
-                    NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                    Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
-                    Content content = cell.getContent();
-
-                    if (content instanceof ContentFormula) {
-                        localValue = ((ContentFormula) content).getValue();
-                    } else if (content instanceof ContentText) {
-                        throw new ContentException("Cell content text is a formula cell dependency!");
-                    } else if (content instanceof ContentNumerical) {
-                        localValue = ((ContentNumerical) content).getValue();
-                    }
-                    minValue = localValue;
-                } else {
-                    minValue = Float.parseFloat(next);
-                }
-                for (int i = 1; i < numArgs; ++i) {
-                    next = aux_stack.pop();
-                    if (Parsing.is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
-                        Content content = cell.getContent();
-                        if (content instanceof ContentFormula) {
-                            localValue = ((ContentFormula) content).getValue();
-                        } else if (content instanceof ContentText) {
-                            throw new ContentException("Cell content text is a formula cell dependency!");
-                        } else if (content instanceof ContentNumerical) {
-                            localValue = ((ContentNumerical) content).getValue();
-                        }
-                        if(localValue < minValue)
-                            minValue = localValue;
-                    } else {
-                        localValue = Float.parseFloat(next);
-                        if(localValue < minValue)
-                            minValue = localValue;
-                    }
-                }
-                result = minValue;
-            }
-            case ("MAX") -> {
-                float maxValue = 0;
-                float localValue = 0;
-                next = aux_stack.pop();
-                if (Parsing.is_cell_id(next)) {
-                    NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                    Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
-                    Content content = cell.getContent();
-
-                    if (content instanceof ContentFormula) {
-                        localValue = ((ContentFormula) content).getValue();
-                    } else if (content instanceof ContentText) {
-                        throw new ContentException("Cell content text is a formula cell dependency!");
-                    } else if (content instanceof ContentNumerical) {
-                        localValue = ((ContentNumerical) content).getValue();
-                    }
-                    maxValue = localValue;
-                } else {
-                    maxValue = Float.parseFloat(next);
-                }
-                for (int i = 1; i < numArgs; ++i) {
-                    next = aux_stack.pop();
-                    if (Parsing.is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
-                        Content content = cell.getContent();
-                        if (content instanceof ContentFormula) {
-                            localValue = ((ContentFormula) content).getValue();
-                        } else if (content instanceof ContentText) {
-                            throw new ContentException("Cell content text is a formula cell dependency!");
-                        } else if (content instanceof ContentNumerical) {
-                            localValue = ((ContentNumerical) content).getValue();
-                        }
-                        if(localValue > maxValue)
-                            maxValue = localValue;
-                    } else {
-                        localValue = Float.parseFloat(next);
-                        if(localValue > maxValue)
-                            maxValue = localValue;
-                    }
-                }
-                result = maxValue;
-            }
-            case ("PROMEDIO") -> {
-                for (int i = 0; i < numArgs; ++i) {
-                    next = aux_stack.pop();
-                    if (Parsing.is_cell_id(next)) {
-                        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(next);
-                        Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
-                        Content content = cell.getContent();
-                        Float value = (float) 0;
-                        if (content instanceof ContentFormula) {
-                            value = ((ContentFormula) content).getValue();
-                        } else if (content instanceof ContentText) {
-                            throw new ContentException("Cell content text is a formula cell dependency!");
-                        } else if (content instanceof ContentNumerical) {
-                            value = ((ContentNumerical) content).getValue();
-                        }
-                        result += value;
-                    } else {
-                        result += Float.parseFloat(next);
-                    }
-                }
-                result = result/numArgs;
-            }
-            default -> throw new ContentException("Evaluate postfix: function: " + function + "not supported");
+            case "SUMA":
+                result = SUMA.sumaFunction(aux_stack, spreadsheet, numArgs);
+                break;
+            case "MIN":
+                result = MIN.minFunction(aux_stack, spreadsheet, numArgs);
+                break;
+            case "MAX":
+                result = MAX.maxFunction(aux_stack, spreadsheet, numArgs);
+                break;
+            case "PROMEDIO":
+                result = PROMEDIO.promedioFunction(aux_stack, spreadsheet, numArgs);
+                break;
+            default:
+                throw new ContentException("Evaluate postfix: function: " + function + " not supported");
         }
+
         return result;
     }
-
 
 
     public static float evaluate_postfix(Spreadsheet spreadsheet, LinkedList<String> postfix, LinkedList<String> tokens) throws ContentException, CircularDependencyException { //-1 not suported!

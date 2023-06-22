@@ -2,7 +2,6 @@ package org.example.Formula;
 
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
-import org.example.*;
 import org.example.Spreadsheet;
 
 import java.util.*;
