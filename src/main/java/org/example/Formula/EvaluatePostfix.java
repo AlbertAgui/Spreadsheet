@@ -74,13 +74,7 @@ public class EvaluatePostfix {
             Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
             Content content = cell.getContent();
             Float value = (float) 0;
-            if (content instanceof ContentFormula) {
-                value = ((ContentFormula) content).getValue();
-            } else if (content instanceof ContentText) {
-                throw new ContentException("Cell content text is a formula cell dependency!");
-            } else if (content instanceof ContentNumerical) {
-                value = ((ContentNumerical) content).getValue();
-            }
+            value = content.getContentNumber();
             l_op = value;
         } else {
             l_op = Float.parseFloat(l_operand);
@@ -93,13 +87,7 @@ public class EvaluatePostfix {
             Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
             Content content = cell.getContent();
             Float value = (float) 0;
-            if (content instanceof ContentFormula) {
-                value = ((ContentFormula) content).getValue();
-            } else if (content instanceof ContentText) {
-                throw new ContentException("Cell content text is a formula cell dependency!");
-            } else if (content instanceof ContentNumerical) {
-                value = ((ContentNumerical) content).getValue();
-            }
+            value = content.getContentNumber();
             r_op = value;
         } else {
             r_op = Float.parseFloat(r_operand);
@@ -177,13 +165,7 @@ public class EvaluatePostfix {
                             Cell cell = SpreadsheetManager.getCellAny(spreadsheet, localCoordinate); //To get 0 from empty cells
                             Content content = cell.getContent();
                             Float value = (float) 0;
-                            if (content instanceof ContentFormula) {
-                                value = ((ContentFormula) content).getValue();
-                            } else if (content instanceof ContentText) {
-                                throw new ContentException("Cell content text is a formula cell dependency!");
-                            } else if (content instanceof ContentNumerical) {
-                                value = ((ContentNumerical) content).getValue();
-                            }
+                            value = content.getContentNumber();
                             aux_stack.push(Float.toString(value));
                         }
                     }
@@ -195,13 +177,7 @@ public class EvaluatePostfix {
                 Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate); //To get 0 from empty cells
                 Content content = cell.getContent();
                 Float value = (float) 0;
-                if (content instanceof ContentFormula) {
-                    value = ((ContentFormula) content).getValue();
-                } else if (content instanceof ContentText) {
-                    throw new ContentException("Cell content text is a formula cell dependency!");
-                } else if (content instanceof ContentNumerical) {
-                    value = ((ContentNumerical) content).getValue();
-                }
+                value = content.getContentNumber();
                 return value;
             } else {
                 return Float.parseFloat(next);
