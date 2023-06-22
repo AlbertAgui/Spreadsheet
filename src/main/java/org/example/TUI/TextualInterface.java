@@ -171,41 +171,59 @@ public class TextualInterface {
         }
     }
 
-    public static void input_commands(String[] args) throws ReadingSpreadSheetException, SavingSpreadSheetException {
+    public static void input_commands(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String uc = "";
         System.out.println("RF address = read commands from a file \n" +
                 " C for create an spread sheet \n" +
                 " E CellCordinate Input for editing a cell \n" +
-                " L path for load \n S path for Store");
+                " L path for load \n" +
+                " S path for Store \n" +
+                " QUIT to close the program");
         while (!uc.equals("quit")) {
             System.out.print("Enter command:");
             uc = scanner.nextLine();
 
             if (uc.startsWith("RF")) {
-                System.out.println(Arrays.toString(RF(uc)));
+                try {
+                    System.out.println(Arrays.toString(RF(uc)));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             } else if (uc.startsWith("C")) {
-                System.out.println(Arrays.toString(C()));
+                try {
+                    System.out.println(Arrays.toString(C()));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             } else if (uc.startsWith("E")) {
                 try {
                     System.out.println(Arrays.toString(E(uc)));
-                } catch (ContentException e) {
-                    throw new RuntimeException(e);
-                } catch (CircularDependencyException e) {
-                    throw new RuntimeException(e);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             } else if (uc.startsWith("L")) {
-                System.out.println(Arrays.toString(L(uc)));
+                try {
+                    System.out.println(Arrays.toString(L(uc)));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             } else if (uc.startsWith("S")) {
-                System.out.println(Arrays.toString(S(uc)));
-            } else if (uc.equals("quit")) {
+                try {
+                    System.out.println(Arrays.toString(S(uc)));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            } else if (uc.equals("QUIT")) {
                 break;
             } else {
                 System.out.println("Wrong Command\n Please Enter correctly");
                 System.out.println("RF address = read commands from a file \n" +
                         " C for create an spread sheet \n" +
                         " E CellCordinate Input for editing a cell \n" +
-                        " L path for load \n S path for Store");
+                        " L path for load \n" +
+                        " S path for Store \n" +
+                        " QUIT to close the program");
             }
         }
     }

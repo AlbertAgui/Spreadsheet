@@ -25,7 +25,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
             SpreadsheetManager.editCell(spreadsheet, numCoordinate, input);
 //            spreadsheet.cells.printCells();
         } catch (CircularDependencyException e) {
-            throw new CircularDependencyException("Error loading spreadsheet: " + e.getMessage());
+            throw new CircularDependencyException("Error editing cell: " + e.getMessage());
         }
     }
 
@@ -39,8 +39,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
 //            TextualInterface.printCells(spreadsheet.cells);
 //            spreadsheet.cells.printCells();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new ReadingSpreadSheetException();
+            throw new ReadingSpreadSheetException("Error loading spreadsheet: " + e.getMessage());
         }
     }
 
@@ -49,8 +48,7 @@ public class Controller implements ISpreadsheetControllerForChecker {
             SaveToFile.storeSpreadsheet(path, spreadsheet);
 //            spreadsheet.cells.printCells();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new SavingSpreadSheetException();
+            throw new SavingSpreadSheetException("Error storing spreadsheet: " + e.getMessage());
         }
     }
 
