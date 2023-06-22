@@ -110,7 +110,7 @@ public class LoadTest extends SuperClassForTests {
         this.checkStringFromFormulaInCell("F1", "100/(A5+(A5*A5/5))", valorCadaTest);
         this.checkStringFromFormulaInCell("G1", "(A5*4)/(A2+A2)+SUMA(1;2;3;4;5)", valorCadaTest);
         this.checkStringFromFormulaInCell("H1", "(A5*4)/(A2+A2)+SUMA(A1;A2;3;4;5)", valorCadaTest);
-        this.checkStringFromFormulaInCell("I1", "((A5*4)/(A2+A2)+SUMA(A1;A2;3;4;5;A6:A12)", valorCadaTest);
+        this.checkStringFromFormulaInCell("I1", "(A5*4)/(A2+A2)+SUMA(A1;A2;3;4;5;A6:A12)", valorCadaTest);
         this.checkStringFromFormulaInCell("J1", "(A5*4)/(A2+A2)+SUMA(A1;A2;3;4;5;A6:A12;MIN(A13:A20))", valorCadaTest);
         this.checkEmptyCell("K1", valorCadaTest);
     }

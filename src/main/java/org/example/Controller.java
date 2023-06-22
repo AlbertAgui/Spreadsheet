@@ -1,6 +1,5 @@
 package org.example;
 
-import java.io.IOException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.CircularDependencyException;
 import edu.upc.etsetb.arqsoft.spreadsheet.entities.ContentException;
@@ -8,20 +7,25 @@ import edu.upc.etsetb.arqsoft.spreadsheet.entities.NoNumberException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ISpreadsheetControllerForChecker;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.ReadingSpreadSheetException;
 import edu.upc.etsetb.arqsoft.spreadsheet.usecases.marker.SavingSpreadSheetException;
-import org.example.Content;
+import org.example.ContentPackage.Content;
+import org.example.ContentPackage.ContentFormula;
+import org.example.ContentPackage.ContentNumerical;
+import org.example.ContentPackage.ContentText;
+import org.example.LoadAndSave.LoadFromFile;
+import org.example.LoadAndSave.SaveToFile;
 
 
 public class Controller implements ISpreadsheetControllerForChecker {
     private static Spreadsheet spreadsheet;
 
-    public static void editCell(String cellId, String input) { //WORKING
+    public static void editCell(String cellId, String input) throws CircularDependencyException, ContentException { //WORKING
         try {
             NumCoordinate numCoordinate;
-            numCoordinate = Translate_coordinate.translate_coordinate_to_int(cellId);
-            ControllerSpreadsheet.editCell(spreadsheet, numCoordinate, input);
+            numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(cellId);
+            SpreadsheetManager.editCell(spreadsheet, numCoordinate, input);
 //            spreadsheet.cells.printCells();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (CircularDependencyException e) {
+            throw new CircularDependencyException("Error editing cell: " + e.getMessage());
         }
     }
 
@@ -29,21 +33,22 @@ public class Controller implements ISpreadsheetControllerForChecker {
         spreadsheet = new Spreadsheet();
     }
 
-    public static void loadSpreadsheet(String path) {
+    public static void loadSpreadsheet(String path) throws ReadingSpreadSheetException {
         try {
-            spreadsheet = Load_store.loadspreadsheet(path);
+            spreadsheet = LoadFromFile.loadSpreadsheet(path);
+//            TextualInterface.printCells(spreadsheet.cells);
 //            spreadsheet.cells.printCells();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            throw new ReadingSpreadSheetException("Error loading spreadsheet: " + e.getMessage());
         }
     }
 
-    public static void storeSpreadsheet(String path) {
+    public static void storeSpreadsheet(String path) throws SavingSpreadSheetException {
         try {
-            Load_store.storespreadsheet(path, spreadsheet);
+            SaveToFile.storeSpreadsheet(path, spreadsheet);
 //            spreadsheet.cells.printCells();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            throw new SavingSpreadSheetException("Error storing spreadsheet: " + e.getMessage());
         }
     }
 
@@ -54,24 +59,29 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     @Override
     public double getCellContentAsDouble(String coord) throws BadCoordinateException, NoNumberException {
-        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
-       Content content = spreadsheet.cells.getCell(numCoordinate).getContent();
-        if(content == null)
-            return (double) 0;
-        float value = (float) content.getValue();
-        double value2 = (double) value;
-        return value2;
+       NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(coord);
+       Cell cell = SpreadsheetManager.getCellAny(spreadsheet, numCoordinate);
+       Content content = cell.getContent();
+        double value = (double) 0;
+        if (content instanceof ContentText) {
+            throw new NoNumberException();
+        }
+        else if (content instanceof ContentFormula || content instanceof ContentNumerical) {
+            value = (double) content.getValue();
+        }
+        return value;
+//                            writer.write(Float.toString(((ContentNumerical) content).getValue()));
     }
 
     @Override
     public String getCellContentAsString(String cooord) throws BadCoordinateException {
-        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(cooord);
+        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(cooord);
         return ((ContentText)spreadsheet.cells.getCell(numCoordinate).getContent()).getValue();
     }
 
     @Override
     public String getCellFormulaExpression(String coord) throws BadCoordinateException {
-        NumCoordinate numCoordinate = Translate_coordinate.translate_coordinate_to_int(coord);
+        NumCoordinate numCoordinate = Translate_coordinate.translateCellIdToCoordinateTo(coord);
         return ((ContentFormula)spreadsheet.cells.getCell(numCoordinate).getContent()).getWrittenData();
 //        ContentFormula content = spreadsheet.cells.getCell(numCoordinate).getContent();
 //        ((ContentFormula) content).getWrittenData();
@@ -89,5 +99,9 @@ public class Controller implements ISpreadsheetControllerForChecker {
 
     public static ISpreadsheetControllerForChecker createSpreadsheetController() {
         return new Controller();
+    }
+
+    public static Spreadsheet getSpreadsheet(){
+        return spreadsheet;
     }
 }

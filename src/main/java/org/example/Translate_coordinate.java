@@ -1,10 +1,12 @@
 package org.example;
 
+import edu.upc.etsetb.arqsoft.spreadsheet.entities.BadCoordinateException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Translate_coordinate {
-    public static NumCoordinate translate_coordinate_to_int(String s_coordinate) {
+    public static NumCoordinate translateCellIdToCoordinateTo(String s_coordinate) {
         String pattern = "^([A-Z]+)(\\d+)$";
 
         Pattern regexPattern = Pattern.compile(pattern);
@@ -33,8 +35,7 @@ public class Translate_coordinate {
             return numCoordinate;
         }
         else {
-            System.out.println("Incorrect cell format" + "s_coordinate");
-            return null;
+            throw new BadCoordinateException("Incorrect cell format" + "s_coordinate");
         }
     }
 }

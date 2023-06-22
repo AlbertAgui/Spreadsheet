@@ -1,6 +1,6 @@
 package org.example;
 
-import java.util.Set;
+import org.example.ContentPackage.Content;
 
 public class Cell {
     private Content content;

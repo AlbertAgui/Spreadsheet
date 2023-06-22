@@ -1,7 +1,7 @@
 package org.example;
 
-import java.util.Map;
-import java.util.Set;
+import org.example.Cells;
+import org.example.NumCoordinate;
 
 public class Spreadsheet {
     public Cells cells;
