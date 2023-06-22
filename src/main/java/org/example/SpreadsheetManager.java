@@ -14,22 +14,22 @@ public class SpreadsheetManager {
         visited.add(numCoordinate);
         Cell cell = SpreadsheetManager.getCellExisting(spreadsheet,numCoordinate);
         Content content = cell.getContent();
-        if(content instanceof ContentFormula) {
-            String body = ((ContentFormula) content).getWrittenData();
-            LinkedList <String> dependencies = ContentTools.getDependencies(body);
-            if(dependencies.isEmpty()) {
-                stack.add(numCoordinate);
-            } else {
-                for (String dependency : dependencies) {
-                    NumCoordinate coordinate;
-                    coordinate = Translate_coordinate.translateCellIdToCoordinateTo(dependency);
-                    if(!visited.contains(coordinate)) {
-                        recomputeCell(spreadsheet, coordinate, stack, visited);
-                    }
+        //if(content instanceof ContentFormula) {
+        String body = ((ContentFormula) content).getWrittenData();
+        LinkedList <String> dependencies = ContentTools.getDependencies(body);
+        if(dependencies.isEmpty()) {
+            stack.add(numCoordinate);
+        } else {
+            for (String dependency : dependencies) {
+                NumCoordinate coordinate;
+                coordinate = Translate_coordinate.translateCellIdToCoordinateTo(dependency);
+                if(!visited.contains(coordinate)) {
+                    recomputeCell(spreadsheet, coordinate, stack, visited);
                 }
-                stack.add(numCoordinate);
             }
-        } /*else if (content instanceof ContentText) {
+            stack.add(numCoordinate);
+        }
+        /*} else if (content instanceof ContentText) {
             throw new Exception("load computing spreadsheet text dependency, this shouldn't happen");
         }*/
     }
@@ -48,6 +48,22 @@ public class SpreadsheetManager {
                     Float value = Formula.compute(writtenData, spreadsheet);
                     ContentTools.updateFormula(spreadsheet, numCoordinate, writtenData, value);
                 }
+            }
+        }
+    }
+
+    private static void changeFromFormula(Spreadsheet spreadsheet, NumCoordinate numCoordinate) throws ContentException {
+        LinkedList<String> old_dependencies = null;
+        LinkedList<String> new_dependencies = null;
+        Cell old_cell = getCellNull(spreadsheet, numCoordinate);
+        if (old_cell != null) {
+            Content old_content = old_cell.getContent();
+            if (old_content instanceof ContentFormula) {
+                String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
+                String old_body = old_writtencontent.substring(1);
+                old_dependencies = ContentTools.getDependencies(old_body);
+                new_dependencies = new LinkedList<>();
+                ContentTools.updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
             }
         }
     }
@@ -97,37 +113,16 @@ public class SpreadsheetManager {
                         //recompute values
                         ContentTools.recomputeCellDependants(spreadsheet, numCoordinate);
                     }
-
                     break;
                 case "Text":
-                    old_cell = getCellNull(spreadsheet, numCoordinate);
-                    if (old_cell != null) {
-                        old_content = old_cell.getContent();
-                        if (old_content instanceof ContentFormula) {
-                            String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                            String old_body = old_writtencontent.substring(1);
-                            old_dependencies = ContentTools.getDependencies(old_body);
-                            new_dependencies = new LinkedList<>();
-                            ContentTools.updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
-                        }
-                    }
+                    changeFromFormula(spreadsheet, numCoordinate);
                     //update written, value
                     ContentTools.updateText(spreadsheet, numCoordinate, input);
                     //recompute values
                     ContentTools.recomputeCellDependants(spreadsheet, numCoordinate);
                     break;
                 case "Numerical":
-                    old_cell = getCellNull(spreadsheet, numCoordinate);
-                    if (old_cell != null) {
-                        old_content = old_cell.getContent();
-                        if (old_content instanceof ContentFormula) {
-                            String old_writtencontent = ((ContentFormula) old_content).getWrittenData();
-                            String old_body = old_writtencontent.substring(1);
-                            old_dependencies = ContentTools.getDependencies(old_body);
-                            new_dependencies = new LinkedList<>();
-                            ContentTools.updateDependencies(spreadsheet, numCoordinate, old_dependencies, new_dependencies);
-                        }
-                    }
+                    changeFromFormula(spreadsheet, numCoordinate);
                     //update written, value
                     String inputTrim = input.trim(); //ERASE SPACES
                     newValue = Float.parseFloat(inputTrim);
@@ -169,7 +164,4 @@ public class SpreadsheetManager {
             cell = new Cell();
         return cell;
     }
-
-    //ADD CELL
-
 }
